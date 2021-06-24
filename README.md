@@ -8,6 +8,8 @@ Tools which are commonly used by other JORE4 projects
 
 - [Tools for Docker](#tools-for-docker)
   - [read-secrets.sh](#read-secretssh)
+- [Github Actions](#github-actions)
+  - [Healthcheck](#healthcheck)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -53,4 +55,26 @@ RUN curl -o /tmp/read-secrets.sh "https://raw.githubusercontent.com/HSLdevcom/jo
 
 # read docker secrets into environment variables and run application
 CMD /bin/bash -c "source /tmp/read-secrets.sh && java -jar /.../xxx.jar"
+```
+
+## Github Actions
+
+### Healthcheck
+
+Runs a user-defined script to check whether a service is up and running
+
+Parameters:
+
+- retries: How many times to retry the healthcheck script before it fails
+  (default: 20)
+- wait_between: How many seconds to wait in between retries (default: 5)
+- command: User-defined command for checking health of a service (required)
+
+Example usage:
+
+```
+steps:
+- uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+  with:
+    command: "curl --fail http://localhost:3200/actuator/health --output /dev/null --silent"
 ```
