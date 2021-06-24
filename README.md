@@ -2,6 +2,15 @@
 
 Tools which are commonly used by other JORE4 projects
 
+<!-- regenerate with: "./development.sh toc" -->
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [Tools for Docker](#tools-for-docker)
+  - [read-secrets.sh](#read-secretssh)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Tools for Docker
 
 ### read-secrets.sh
