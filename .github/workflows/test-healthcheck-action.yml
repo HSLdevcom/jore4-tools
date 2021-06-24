@@ -1,0 +1,25 @@
+name: Test healthcheck action
+
+on:
+  push:
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-healthcheck-success:
+    name: Verifies whether healthcheck action succeeds when it should
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Startup sample HTTP server
+        run: docker run -d -p 8080:80 nginxdemos/hello
+
+      - name: Verify that healthcheck succeeds
+        uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+        with:
+          retries: 2
+          command:
+            "curl --fail http://localhost:8080 --output /dev/null --silent"
+
+  # Note: it does not seem to be possible for now to create a CI job for testing a failing
+  # healthcheck. I have tested it manually however...
