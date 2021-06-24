@@ -1,0 +1,49 @@
+name: Test healthcheck action
+
+on:
+  push:
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-healthcheck-success:
+    name: Verifies whether healthcheck action succeeds when it should
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Startup sample HTTP server
+        run: docker run -d -p 8080:80 nginxdemos/hello
+
+      - name: Verify that healthcheck succeeds
+        uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+        with:
+          retries: 2
+          command:
+            "curl --fail http://localhost:8080 --output /dev/null --silent"
+
+  test-healthcheck-fail:
+    name: Verifies whether healthcheck action fails when it should
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Run healthcheck
+        continue-on-error: true
+        uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+        with:
+          retries: 2
+          command:
+            "curl --fail http://localhost:8080 --output /dev/null --silent"
+
+      - name: Verify that the healthcheck has not succeeded
+        # failure() returns true when any previous step of a job fails.
+        if: ${{ failure() }}
+        run: |
+          echo "Healthcheck failed as expected!"
+          exit 0
+
+      - name: Verify that the healthcheck has not succeeded
+        # success() returns true when none of the previous steps have failed or been canceled.
+        if: ${{ success() }}
+        run: |
+          echo "Healthcheck should not have succeeded!"
+          exit 1
