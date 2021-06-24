@@ -1,0 +1,32 @@
+name: Test healthcheck action
+
+on:
+  push:
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-healthcheck-success:
+    name: Verifies whether healthcheck action succeeds when it should
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Startup sample HTTP server
+        run: docker run -p 8080:80 nginxdemos/hello
+
+      - name: Verify that healthcheck succeeds
+        command: "curl --fail http://localhost:8080"
+
+  test-healthcheck-fail:
+    name: Verifies whether healthcheck action fails when it should
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Verify that healthcheck fails
+        command: "curl --fail http://localhost:8080"
+
+      - name: The job has failed
+        if: ${{ success() }}
+        run: |
+          echo "Healthcheck should have failed!"
+          exit 1
