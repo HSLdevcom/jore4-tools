@@ -1,0 +1,29 @@
+name: "Run healthcheck"
+description:
+  "Runs a user-defined command line script to see whether a service is up and
+  running"
+inputs:
+  retries:
+    description: How many times to retry the healthcheck script before it fails
+    required: false
+    default: 20
+  wait_between:
+    description: How many seconds to wait in between retries
+    required: false
+    default: 5
+  command:
+    description: User-defined command for checking health
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Verify that service is up and running
+      run: |
+        for i in {1..${{ inputs.retries }}}; do
+          ${{ inputs.command }} && exit 0
+          sleep ${{ inputs.wait_between }}
+          echo $i
+        done
+        exit 1
+      shell: bash
