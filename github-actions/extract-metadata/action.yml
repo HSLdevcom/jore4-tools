@@ -1,0 +1,36 @@
+name: "Extract git metadata"
+description:
+  "Extracts repository metadata to environment variables. Useful e.g. when tagging docker images according to jore4 project conventions."
+
+runs:
+  using: "composite"
+  steps:
+    - name: Extract branch name
+      id: branch-name
+      run: |
+        # In pull requests
+          BRANCH_NAME="${GITHUB_HEAD_REF}"
+          [[ ${BRANCH_NAME} = "" ]] && {
+            # In branch pushes
+            BRANCH_NAME="$(echo "${GITHUB_REF}" | cut -d '/' -f 3-)"
+          }
+          echo "BRANCH_NAME=${BRANCH_NAME}" >> "${GITHUB_ENV}"
+      shell: bash
+
+    - name: Extract docker image name
+      id: image-name
+      run: |
+        # GITHUB_REPOSITORY env variable is provided by GitHub and it
+        # contains owner and repository name, e.g. `HSLdevcom/jore4-tools`.
+        # Jore4 project convention is that docker images are named accordingly.
+        #
+        # Docker Hub uses lowercase so use a bashism to convert.
+        echo "IMAGE_NAME=${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Extract commit id
+      id: commit-id
+      run: |
+        # Docker tags can use only some special characters.
+        echo "COMMIT_ID=$(echo "${BRANCH_NAME}" | tr -C '0-9a-zA-Z._' '-')-${GITHUB_SHA}" >> $GITHUB_ENV
+      shell: bash
