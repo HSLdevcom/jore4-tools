@@ -11,6 +11,8 @@ Tools which are commonly used by other JORE4 projects
 - [Github Actions](#github-actions)
   - [extract-metadata](#extract-metadata)
   - [healthcheck](#healthcheck)
+- [Github scripts](#github-scripts)
+  - [add_secrets.py](#add_secretspy)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -95,3 +97,11 @@ steps:
   with:
     command: "curl --fail http://localhost:3200/actuator/health --output /dev/null --silent"
 ```
+
+## Github scripts
+
+### add_secrets.py
+
+Adds robot users hsl-id e-mail and password to all jore4 repositories.
+Uses file named `test_users.json` as input for user details. This file should be created by changing placeholder values in `tests_users_template.json` to correct passwords and e-mails.
+After the script is run the secrets can be found by going to repositorys `Settings` page in github and then selecting `Secrets` tab. There should be now secrets named `ROBOT_HSLID_EMAIL` and `ROBOT_HSLID_PASSWORD` and they should show that they have been updated when you ran the script.
