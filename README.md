@@ -103,5 +103,9 @@ steps:
 ### add_secrets.py
 
 Adds robot users hsl-id e-mail and password to all jore4 repositories.
-Uses file named `test_users.json` as input for user details. This file should be created by changing placeholder values in `tests_users_template.json` to correct passwords and e-mails.
+Uses file named `test_users.json` as input for user details. This file should be created by changing placeholder values in `tests_users_template.json` to correct passwords and e-mails, these can be found from the hsl-jore4-common key-vault as secrets.
 After the script is run the secrets can be found by going to repositorys `Settings` page in github and then selecting `Secrets` tab. There should be now secrets named `ROBOT_HSLID_EMAIL` and `ROBOT_HSLID_PASSWORD` and they should show that they have been updated when you ran the script.
+
+Example usage:
+`python3 add_secrets.py`
+Running the script requires that you have python and GitHub CLI installed and access to HSLdevcom organization in GitHub. Instructions for installing GitHub CLI can be found here: https://github.com/cli/cli#installation
