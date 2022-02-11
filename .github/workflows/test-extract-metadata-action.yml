@@ -23,5 +23,4 @@ jobs:
       - name: Check that IMAGE_NAME environment variable is created and is valid
         run: '[[ "$IMAGE_NAME" == "hsldevcom/jore4-tools" ]]'
 
-        # (tests for BRANCH_NAME and COMMIT_ID omitted for now as they might change on each run so its a little bit tricky to test those)
-
+        # (tests for BRANCH_NAME, CURRENT_DATE and COMMIT_ID are omitted for now as they might change on each run so its a little bit tricky to test those)
