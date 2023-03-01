@@ -8,6 +8,7 @@ Tools which are commonly used by other JORE4 projects
 
 - [Tools for Docker](#tools-for-docker)
   - [read-secrets.sh](#read-secretssh)
+  - [download-docker-bundle.sh](#download-docker-bundlesh)
 - [Github Actions](#github-actions)
   - [extract-metadata](#extract-metadata)
   - [healthcheck](#healthcheck)
@@ -59,6 +60,42 @@ RUN curl -o /tmp/read-secrets.sh "https://raw.githubusercontent.com/HSLdevcom/jo
 
 # read docker secrets into environment variables and run application
 CMD /bin/bash -c "source /tmp/read-secrets.sh && java -jar /.../xxx.jar"
+```
+
+### download-docker-bundle.sh
+
+Downloads and extract the latest version of the docker bundle. It uses the `gh` github command line tool to retrieve the bundle from the releases.
+
+To see how docker-compose bundle is created and used, refer to [wiki](https://github.com/HSLdevcom/jore4/wiki/Infra#docker-compose-bundle)
+
+Parameters:
+- with the `DOCKER_BUNDLE_PATH` environment variable you can set the destination folder to where the bundle is downloaded. Default "./docker"
+
+Usage:
+```sh
+curl https://raw.githubusercontent.com/HSLdevcom/jore4-tools/main/docker/download-docker-bundle.sh | DOCKER_BUNDLE_PATH=./docker bash
+
+# or just simply:
+curl https://raw.githubusercontent.com/HSLdevcom/jore4-tools/main/docker/download-docker-bundle.sh | bash
+```
+
+Usage in context of starting up a local development environment:
+
+```sh
+#!/bin/bash
+
+set -euo pipefail
+
+# download latest docker bundle
+curl https://raw.githubusercontent.com/HSLdevcom/jore4-tools/main/docker/download-docker-bundle.sh | bash
+
+# start up some dependency services (and build on-demand) in the background
+docker-compose -f ./docker/docker-compose.yml up -d jore4-testdb jore4-hasura jore4-auth
+
+# start up some dependency services with some overrides (e.g. pinned docker image versions) in a docker-compose.custom.yml file and build on demand (if using own repo's Dockerfile too)
+docker-compose -f ./docker/docker-compose.yml -f ./docker/docker-compose.custom.yml up --build jore4-testdb jore4-hasura jore4-auth
+
+# more info on docker-compose up command: https://docs.docker.com/engine/reference/commandline/compose_up/
 ```
 
 ## Github Actions
