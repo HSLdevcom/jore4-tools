@@ -1,0 +1,115 @@
+name: Test e2e environment setup action
+
+on:
+  push:
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-e2e-setup-action:
+    runs-on: ubuntu-20.04
+
+    strategy:
+      matrix:
+        include:
+          # no overwrites for images
+          - ui-docker-image:
+            hasura-docker-image:
+            auth-docker-image:
+            mbtiles-docker-image:
+            jore3importer-docker-image:
+            testdb-docker-image:
+            mssqltestdb-docker-image:
+            mapmatching-docker-image:
+            mapmatchingdb-docker-image:
+            cypress-docker-image:
+            hastus-docker-image:
+            custom-docker-compose:
+          # overwrite some
+          - ui-docker-image: "hsldevcom/jore4-ui:latest"
+            hasura-docker-image:
+            auth-docker-image:
+            mbtiles-docker-image:
+            jore3importer-docker-image:
+            testdb-docker-image:
+            mssqltestdb-docker-image:
+            mapmatching-docker-image:
+            mapmatchingdb-docker-image:
+            cypress-docker-image:
+            hastus-docker-image:
+            custom-docker-compose:
+          # use custom docker-compose file
+          - ui-docker-image:
+            hasura-docker-image:
+            auth-docker-image:
+            mbtiles-docker-image:
+            jore3importer-docker-image:
+            testdb-docker-image:
+            mssqltestdb-docker-image:
+            mapmatching-docker-image:
+            mapmatchingdb-docker-image:
+            cypress-docker-image:
+            hastus-docker-image:
+            custom-docker-compose: "custom-compose.yml" # this overwrites the hasura image to be "jore4-hasura:latest"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Retrieve branch name
+        uses: HSLdevcom/jore4-tools/github-actions/extract-metadata@extract-metadata-v1
+
+      - name: Create a temporary custom docker compose file for testing
+        run: |
+          touch custom-compose.yml
+          echo "services:" >> custom-compose.yml
+          echo "  jore4-hasura:" >> custom-compose.yml
+          echo "    image: 'hsldevcom/jore4-hasura:latest'" >> custom-compose.yml
+
+      - name: start e2e env
+        uses: ./github-actions/setup-e2e-environment
+        with:
+          ui_version: ${{ matrix.ui-docker-image }}
+          hasura_version: ${{ matrix.hasura-docker-image }}
+          auth_version: ${{ matrix.auth-docker-image }}
+          mbtiles_version: ${{ matrix.mbtiles-docker-image }}
+          jore3importer_version: ${{ matrix.jore3importer-docker-image }}
+          testdb_version: ${{ matrix.testdb-docker-image }}
+          mssqltestdb_version: ${{ matrix.mssqltestdb-docker-image }}
+          mapmatching_version: ${{ matrix.mapmatching-docker-image }}
+          mapmatchingdb_version: ${{ matrix.mapmatchingdb-docker-image }}
+          cypress_version: ${{ matrix.cypress-docker-image }}
+          hastus_version: ${{ matrix.hastus-docker-image }}
+          custom_docker_compose: ${{ matrix.custom-docker-compose }}
+
+      - name: Check that correct version of UI is running
+        run: |
+          UI_DEPLOYED_VERSION=`docker inspect --format='{{.Config.Image}}' ui`
+          if [[ "${{ matrix.ui-docker-image }}" == "" && "$UI_DEPLOYED_VERSION" == "${{ matrix.ui-docker-image }}" ]]
+          then
+            echo "Error! The docker image version shouldn't have been overwritten!"
+            exit 1
+          fi
+
+          if [[ "${{ matrix.ui-docker-image }}" != "" && "$UI_DEPLOYED_VERSION" != "${{ matrix.ui-docker-image }}" ]]
+          then
+            echo "Error! The docker image version should've been overwritten!"
+            exit 1
+          fi
+
+      - name:
+          Check that correct version of HASURA is running (overwritten by custom
+          docker compose file)
+        run: |
+          HASURA_DEPLOYED_VERSION=`docker inspect --format='{{.Config.Image}}' hasura`
+          if [[ "${{ matrix.custom-docker-compose }}" == "" && "$HASURA_DEPLOYED_VERSION" == "hsldevcom/jore4-hasura:latest" ]]
+          then
+            echo "Error! The docker image version shouldn't have been overwritten!"
+            exit 1
+          fi
+
+          if [[ "${{ matrix.custom-docker-compose }}" != "" && "$HASURA_DEPLOYED_VERSION" != "hsldevcom/jore4-hasura:latest" ]]
+          then
+            echo "Error! The docker image version should've been overwritten!"
+            exit 1
+          fi

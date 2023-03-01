@@ -11,6 +11,7 @@ Tools which are commonly used by other JORE4 projects
 - [Github Actions](#github-actions)
   - [extract-metadata](#extract-metadata)
   - [healthcheck](#healthcheck)
+  - [setup-e2e-environment](#setup-e2e-environment)
 - [Github scripts](#github-scripts)
   - [add_secrets.py](#add_secretspy)
 
@@ -96,6 +97,36 @@ steps:
 - uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
   with:
     command: "curl --fail http://localhost:3200/actuator/health --output /dev/null --silent"
+```
+
+### setup-e2e-environment
+
+Retrieves a given version of the docker-compose bundle from the releases and runs it. Optionally
+can set given services' docker image versions.
+
+To see how docker-compose bundle is created and used, refer to [wiki](https://github.com/HSLdevcom/jore4/wiki/Infra#docker-compose-bundle)
+
+Parameters:
+- bundle_version: Version of the docker-compose bundle to use (= github release version)
+- custom_docker_compose: Path for an additional docker-compose file to be used when starting up the environment.
+- ui_version, hasura_version, ... (*_version): Specific the docker image tag of the microservice to be used. For all options, see `/github-actions/setup-e2e-environment/action.yml`
+
+Example usage:
+
+```
+steps:
+- uses: HSLdevcom/jore4-tools/github-actions/extract-metadata@extract-metadata-v1
+
+- uses: HSLdevcom/jore4-tools/github-actions/setup-e2e-environment@setup-e2e-environment-v1
+  with:
+    ui_version: '${{ env.IMAGE_NAME }}:${{ env.COMMIT_ID }}'
+```
+
+```
+steps:
+- uses: HSLdevcom/jore4-tools/github-actions/setup-e2e-environment@setup-e2e-environment-v1
+  with:
+    custom_docker_compose: ./docker/docker-compose.custom.yml
 ```
 
 ## Github scripts
