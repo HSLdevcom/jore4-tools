@@ -1,0 +1,21 @@
+name: Test run cypress tests action
+
+on:
+  push:
+  pull_request:
+    branches: [main]
+
+jobs:
+  run_cypress_tests:
+    name: Run cypress e2e tests from docker
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Start e2e env
+        uses: ./github-actions/setup-e2e-environment
+
+      - name: Run e2e tests from github action
+        uses: ./github-actions/run-cypress-tests
