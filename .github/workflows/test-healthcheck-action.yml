@@ -11,11 +11,14 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: Startup sample HTTP server
         run: docker run -d -p 8080:80 nginxdemos/hello
 
       - name: Verify that healthcheck succeeds
-        uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+        uses: ./github-actions/healthcheck
         with:
           retries: 2
           command:
