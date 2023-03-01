@@ -1,4 +1,4 @@
-name: Test e2e environment setup action
+name: Test setup e2e environment action
 
 on:
   push:
