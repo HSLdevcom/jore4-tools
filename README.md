@@ -99,6 +99,18 @@ docker-compose -f ./docker/docker-compose.yml -f ./docker/docker-compose.custom.
 # more info on docker-compose up command: https://docs.docker.com/engine/reference/commandline/compose_up/
 ```
 
+To overwrite some values in the generic docker-compose config, you could use
+[docker-compose overrides](https://docs.docker.com/compose/extends/#multiple-compose-files)
+
+To use your local repository version of the docker image instead of the e2e version, you could use
+[docker-compose local build](https://docs.docker.com/compose/compose-file/compose-file-v3/#build)
+
+To run your service locally e.g. in Maven and then point services within the docker-compose network
+to use this natively running service, you could use
+[host.docker.internal](https://docs.docker.com/desktop/windows/networking/#per-container-ip-addressing-is-not-possible).
+For this, the `extra_hosts` parameter is already set for every service within the docker-compose
+package.
+
 ## Github Actions
 
 ### extract-metadata
