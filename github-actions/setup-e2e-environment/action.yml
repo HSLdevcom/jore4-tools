@@ -8,6 +8,10 @@ inputs:
       Version of the docker-compose bundle to use (= github release version)
     required: false
     default: "e2e-docker-compose"
+  bundle_repo:
+    description: Repository to retrieve the bundle from
+    required: false
+    default: "HSLdevcom/jore4-tools"
   ui_version:
     description:
       Version of ui to use (docker image tag). Set to "" if using the default
