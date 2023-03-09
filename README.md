@@ -16,6 +16,8 @@ Tools which are commonly used by other JORE4 projects
   - [run-cypress-tests](#run-cypress-tests)
 - [Github scripts](#github-scripts)
   - [add_secrets.py](#add_secretspy)
+- [Renovatebot preset](#renovatebot-preset)
+  - [jore4-default-preset.json5](#jore4-default-presetjson5)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -226,3 +228,32 @@ After the script is run the secrets can be found by going to repositorys `Settin
 Example usage:
 `python3 add_secrets.py`
 Running the script requires that you have python and GitHub CLI installed and access to HSLdevcom organization in GitHub. Instructions for installing GitHub CLI can be found here: https://github.com/cli/cli#installation
+
+## Renovatebot preset
+
+### jore4-default-preset.json5
+
+Contains a sharable config preset with suggested renovatebot configurations for all jore4 repositories.
+More info: https://docs.renovatebot.com/config-presets/
+
+Example usage:
+```json
+{
+  "extends": ["github>HSLdevcom/jore4-tools//renovatebot/jore4-default-preset.json5"]
+}
+```
+
+Should also add the [renovate config validator](https://github.com/marketplace/actions/validate-renovate-configuration-with-renovate-config-validator)
+github action to make sure that the new changes to the `renovate.json` file are valid after the
+onboarding flow ends.
+
+Example:
+```
+- name: Validate
+  uses: suzuki-shunsuke/github-action-renovate-config-validator@v0.1.3
+  with:
+    config_file_path: .github/renovate.json5
+```
+
+To see a bit more in detail how the renovatebot rules work, check the comments within the
+`jore4-default-preset.json5` file
