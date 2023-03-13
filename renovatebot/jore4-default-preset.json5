@@ -77,11 +77,11 @@
       groupSlug: "typescript",
       matchPackageNames: ["typescript", "ts-node"],
     },
-    // {
-    //   // we don't want to update github actions pinned with sha (digest)
-    //   matchManagers: ['github-actions'],
-    //   matchUpdateTypes: ['digest', 'pin', 'pinDigest'],
-    //   enabled: false,
-    // },
+    {
+      // we don't want to update github actions pinned with sha (digest)
+      matchManagers: ["github-actions"],
+      matchUpdateTypes: ["digest", "pin", "pinDigest"],
+      enabled: false,
+    },
   ],
 }
