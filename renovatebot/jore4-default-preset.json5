@@ -65,13 +65,6 @@
       matchPackagePatterns: ["*"],
     },
     {
-      // we want to group nodejs minor updates to its own PR (both npm and docker versions)
-      groupName: "nodejs updates",
-      groupSlug: "nodejs",
-      matchPackageNames: ["node", "@types/node"],
-      allowedVersions: "18.x",
-    },
-    {
       // we want to group typescript updates to its own PR
       groupName: "typescript updates",
       groupSlug: "typescript",
@@ -82,6 +75,26 @@
       matchManagers: ["github-actions"],
       matchUpdateTypes: ["digest", "pin", "pinDigest"],
       enabled: false,
+    },
+    {
+      // group spring boot updates to own PR
+      groupName: "spring boot",
+      groupSlug: "spring-boot",
+      matchPackageNames: ["org.springframework.boot"],
+      matchPackagePrefixes: ["org.springframework.boot:"],
+    },
+    {
+      // group Dockerfile and docker-compose version updates to own PR
+      groupName: "docker updates",
+      groupSlug: "docker",
+      matchManagers: ["dockerfile", "docker-compose"],
+    },
+    {
+      // we want to group nodejs minor updates to its own PR (both npm and docker versions)
+      groupName: "nodejs updates",
+      groupSlug: "nodejs",
+      matchPackageNames: ["node", "@types/node"],
+      allowedVersions: "18.x",
     },
   ],
 }
