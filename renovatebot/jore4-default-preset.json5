@@ -24,8 +24,9 @@
 
   // what branches to look for updates
   baseBranches: ["main"],
-  // to reduce PR rebases, only rebase when the PR is conflicted
-  rebaseWhen: "conflicted",
+  // to reduce PR rebases, only rebase when the PR is conflicted. Except if group is marked as
+  // automerge, in which case we do want the PR to be always up to date
+  rebaseWhen: "auto",
   // what labels to add to the created PRs
   labels: ["dependencies"],
   // what type of merge to use when a PR is automatically merged (note: IF automerge is enabled)
