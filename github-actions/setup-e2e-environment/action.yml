@@ -237,7 +237,7 @@ runs:
       uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
       with:
         command:
-          "curl --fail http://localhost:3207/actuator/health --output /dev/null
+          "curl --fail http://localhost:3008/actuator/health --output /dev/null
           --silent"
 
     - name: Verify that hastus importer is up and running through proxy
