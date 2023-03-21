@@ -20,6 +20,9 @@
     // 'group:allNonMajor', // group all non-major updates into a single PR
     // 'group:monorepos', // group monorepos into own PRs
     // 'group:recommended', // some other recommended groups
+
+    // Run before 3am on Monday
+    "schedule:earlyMondays"
   ],
 
   // what branches to look for updates
@@ -37,9 +40,6 @@
   prHourlyLimit: 2,
   // limit to maximum x open PRs at any time.
   prConcurrentLimit: 10,
-  // when to look for changes
-  // TODO: remove the "at any time" rule after the repositories are configures
-  schedule: ["before 3am on Monday", "at any time"],
   // range strategy (e.g. semver ^ vs ~). Bump = update version for every bump
   rangeStrategy: "bump",
   // whether to separate major and minor updates to different PRs
