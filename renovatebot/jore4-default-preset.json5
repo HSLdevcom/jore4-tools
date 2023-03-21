@@ -68,7 +68,7 @@
     },
     {
       // we want to group typescript updates to its own PR
-      groupName: "typescript updates",
+      groupName: "typescript",
       groupSlug: "typescript",
       matchPackageNames: ["typescript", "ts-node"],
     },
@@ -87,13 +87,13 @@
     },
     {
       // group Dockerfile and docker-compose version updates to own PR
-      groupName: "docker updates",
+      groupName: "docker dependencies",
       groupSlug: "docker",
       matchManagers: ["dockerfile", "docker-compose"],
     },
     {
       // we want to group nodejs minor updates to its own PR (both npm and docker versions)
-      groupName: "nodejs updates",
+      groupName: "nodejs",
       groupSlug: "nodejs",
       matchPackageNames: ["node", "@types/node"],
       allowedVersions: "18.x",
