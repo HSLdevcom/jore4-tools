@@ -45,7 +45,7 @@
   // whether to separate major and minor updates to different PRs
   separateMajorMinor: false,
   // set JORE4 team as default reviewers
-  reviewers: ["team:HSLdevcom/jore4"],
+  reviewers: ["team:jore4"],
 
   // Note: the updates are packages to pull requests in the order of the packageRules below.
   // If package X matches rules 1, 2 and 3, it will end up always in the last one, group 3.
