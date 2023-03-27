@@ -10,22 +10,45 @@ inputs:
       it to ''.
     required: false
     default: "@smoke"
+  parallel:
+    description:
+      Whether to run e2e tests in three parallel threads, "true" or "false"
+    required: false
+    default: "false"
 
 runs:
   using: "composite"
   steps:
-    - name: Run all tests using the e2e docker bundle's cypress container
-      if: inputs.test-tags == ''
+    - name: Run all tests using the e2e docker bundle's cypress container. No parallelization.
+      if: inputs.test-tags == '' && inputs.parallel == 'false'
       run: |
         docker exec cypress \
-          bash -c "yarn test:e2e"
+          bash -c "yarn test:e2e:parallel --threads 1"
       shell: bash
 
-    - name: Run tests that have the provided tags
-      if: startsWith(inputs.test-tags, '@')
+    - name: Run tests that have the provided tags. No parallelization.
+      if: startsWith(inputs.test-tags, '@') && inputs.parallel == 'false'
+      env:
+        cy-run: "CYPRESS_BASE_URL=${CYPRESS_BASE_URL:-http://localhost:3300} cypress run --browser chrome --env grepTags='${{ inputs.test-tags }}'"
       run: |
         docker exec cypress \
-          bash -c "yarn test:e2e --env grepTags='${{ inputs.test-tags }}'"
+          bash -c "yarn ws:db build && yarn ws:e2e cypress-parallel --script $cy-run --threads 1 --verbose --reporterModulePath '../node_modules/cypress-multi-reporters' --specsDir 'e2e/*.cy.ts'"
+      shell: bash
+
+    - name: Run all tests in parallel using the e2e docker bundle's cypress container
+      if: inputs.test-tags == '' && inputs.parallel == 'true'
+      run: |
+        docker exec cypress \
+          bash -c "yarn test:e2e:parallel"
+      shell: bash
+
+    - name: Run tests that have the provided tags in parallel.
+      if: startsWith(inputs.test-tags, '@') && inputs.parallel == 'true'
+      env:
+        cy-run: "CYPRESS_BASE_URL=${CYPRESS_BASE_URL:-http://localhost:3300} cypress run --browser chrome --env grepTags='${{ inputs.test-tags }}'"
+      run: |
+        docker exec cypress \
+          bash -c "yarn ws:db build && yarn ws:e2e cypress-parallel --script $cy-run --threads 3 --verbose --reporterModulePath '../node_modules/cypress-multi-reporters' --specsDir 'e2e/*.cy.ts'"
       shell: bash
 
     - name: Retrieve test reports from container
