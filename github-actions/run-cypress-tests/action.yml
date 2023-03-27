@@ -10,22 +10,41 @@ inputs:
       it to ''.
     required: false
     default: "@smoke"
+  parallel:
+    description:
+      Whether to run e2e tests in three parallel threads, "true" or "false"
+    required: false
+    default: "false"
 
 runs:
   using: "composite"
   steps:
-    - name: Run all tests using the e2e docker bundle's cypress container
-      if: inputs.test-tags == ''
+    - name: Run all tests using the e2e docker bundle's cypress container. No parallelization.
+      if: inputs.test-tags == '' && inputs.parallel == 'false'
       run: |
         docker exec cypress \
           bash -c "yarn test:e2e"
       shell: bash
 
-    - name: Run tests that have the provided tags
-      if: startsWith(inputs.test-tags, '@')
+    - name: Run tests that have the provided tags. No parallelization.
+      if: startsWith(inputs.test-tags, '@') && inputs.parallel == 'false'
       run: |
         docker exec cypress \
           bash -c "yarn test:e2e --env grepTags='${{ inputs.test-tags }}'"
+      shell: bash
+
+    - name: Run all tests in parallel using the e2e docker bundle's cypress container
+      if: inputs.test-tags == '' && inputs.parallel == 'true'
+      run: |
+        docker exec cypress \
+          bash -c "yarn test:e2e:parallel"
+      shell: bash
+
+    - name: Run tests with the provided tags in parallel 
+      if:  startsWith(inputs.test-tags, '@') && inputs.parallel == 'true'
+      run: |
+        docker exec cypress \
+          bash -c "yarn test:e2e:parallel --env grepTags='${{ inputs.test-tags }}'"
       shell: bash
 
     - name: Retrieve test reports from container
