@@ -10,29 +10,32 @@ inputs:
       it to ''.
     required: false
     default: "@smoke"
+  threads:
+    description:
+      Amount of parallel executors. Supported values are 1-3.
+    required: false
+    default: "1"
+  video:
+    description: Turn video on or off. Accepts 'true' or 'false'.
+    required: false
+    default: "false"
 
 runs:
   using: "composite"
   steps:
-    - name: Run all tests using the e2e docker bundle's cypress container
-      if: inputs.test-tags == ''
+    - name: Run the tests
       run: |
         docker exec cypress \
-          bash -c "yarn test:e2e"
-      shell: bash
-
-    - name: Run tests that have the provided tags
-      if: startsWith(inputs.test-tags, '@')
-      run: |
-        docker exec cypress \
-          bash -c "yarn test:e2e --env grepTags='${{ inputs.test-tags }}'"
+          bash -c "yarn ws:db build && yarn ws:e2e cypress-parallel --script cy:run --threads ${{ inputs.threads }} \
+          --verbose --reporterModulePath '../node_modules/cypress-multi-reporters' --specsDir 'e2e/*.cy.ts' \
+          --args '\'--config video=${{ inputs.video }} --env grepTags="${{ inputs.test-tags }}"\''"
       shell: bash
 
     - name: Retrieve test reports from container
       # should be run even if the tests fail
       if: always()
       run: |
-        docker cp cypress:/e2e/cypress/reports ${{ github.workspace }}/cypress/ || echo "No reports"
+        docker cp cypress:/e2e/cypress/reports ${{ github.workspace }}/test-reports || echo "No reports"
       shell: bash
 
     - name: Upload test reports as an artifact
@@ -42,7 +45,7 @@ runs:
       with:
         name: cypress-docker-reports
         path: |
-          ${{ github.workspace }}/cypress/reports
+          ${{ github.workspace }}/test-reports
 
     - name: Fail the job
       # should fail the job if the tests fail
