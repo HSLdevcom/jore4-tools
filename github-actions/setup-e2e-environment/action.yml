@@ -84,7 +84,7 @@ inputs:
       environment. Can be used to e.g. run tests with the repository's own
       docker-compose.custom.yml setup
     required: false
-    default: ""
+    default: "${GITHUB_ACTION_PATH}/../../docker/docker-compose.e2e.ci.yml"
 
 runs:
   using: "composite"

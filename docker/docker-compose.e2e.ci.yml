@@ -1,0 +1,13 @@
+services:
+  jore4-hastus:
+    container_name: "hastus"
+    # you may replace the bundled docker image by setting $HASTUS_DOCKER_IMAGE
+    image: "${HASTUS_DOCKER_IMAGE:-hsldevcom/jore4-hastus:main--20230628-d47eea56a057b94ff1f19d815fed6f693c0c72b8}"
+    restart: "unless-stopped"
+    networks:
+      - jore4
+    environment:
+      HASURA_URL: "http://jore4-proxy:80/api/graphql/v1/graphql"
+      SECRET_STORE_BASE_PATH: "/mnt/secrets-store"
+    ports:
+      - "127.0.0.1:3008:8080"
