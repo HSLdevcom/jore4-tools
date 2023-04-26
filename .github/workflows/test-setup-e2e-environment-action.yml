@@ -8,8 +8,6 @@ on:
 jobs:
   test-e2e-setup-action:
     runs-on: ubuntu-20.04
-    env:
-      INFRASTRUCTURE_LINK_DUMP_PATH: infraLinks.sql
 
     strategy:
       matrix:
@@ -116,27 +114,5 @@ jobs:
             exit 1
           fi
 
-      - name: Set up PostgreSQL client
-        run: |
-          sudo apt-get -yqq install postgresql-client
-
-      - name: Fetch infrastructure link dump
-        run: |
-          curl https://raw.githubusercontent.com/HSLdevcom/jore4-ui/main/test-db-manager/src/dumps/infraLinks/infraLinks.sql \
-            -o ${{ env.INFRASTRUCTURE_LINK_DUMP_PATH }}
-
-      - name: Seed db1 with infrastructure links
-        run: |
-          psql postgresql://dbadmin:adminpassword@localhost:6532/jore4e2e < ${{ env.INFRASTRUCTURE_LINK_DUMP_PATH }}
-
-      - name: Seed db2 with infrastructure links
-        run: |
-          psql postgresql://dbadmin:adminpassword@localhost:6533/jore4e2e < ${{ env.INFRASTRUCTURE_LINK_DUMP_PATH }}
-
-      - name: Seed db3 with infrastructure links
-        run: |
-          psql postgresql://dbadmin:adminpassword@localhost:6534/jore4e2e < ${{ env.INFRASTRUCTURE_LINK_DUMP_PATH }}
-
-      - name: Seed db4 with infrastructure links
-        run: |
-          psql postgresql://dbadmin:adminpassword@localhost:6432/jore4e2e < ${{ env.INFRASTRUCTURE_LINK_DUMP_PATH }}
+      - name: Seed infrastructure links
+        uses: ./github-actions/seed-infrastructure-links

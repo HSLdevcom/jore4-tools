@@ -15,9 +15,10 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Start e2e env
-        env:
-          INFRASTRUCTURE_LINK_DUMP_PATH: infraLinks.sql
         uses: ./github-actions/setup-e2e-environment
+
+      - name: Seed infrastructure links
+        uses: ./github-actions/seed-infrastructure-links
 
       - name: Run e2e tests from github action
         uses: ./github-actions/run-cypress-tests
