@@ -11,6 +11,34 @@ runs:
         curl https://raw.githubusercontent.com/HSLdevcom/jore4-ui/main/test-db-manager/src/dumps/infraLinks/infraLinks.sql \
           -o infraLinks.sql
 
+    - name: Verify that postgresql is up and running
+      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+      with:
+        command: "pg_isready -h localhost -p 6432"
+        # it takes a while for the database to start
+        retries: 50
+
+    - name: Verify that postgresql testdb-e2e1 is up and running
+      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+      with:
+        command: "pg_isready -h localhost -p 6532"
+        # it takes a while for the database to start
+        retries: 50
+
+    - name: Verify that postgresql testdb-e2e2 is up and running
+      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+      with:
+        command: "pg_isready -h localhost -p 6533"
+        # it takes a while for the database to start
+        retries: 50
+
+    - name: Verify that postgresql testdb-e2e3 is up and running
+      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+      with:
+        command: "pg_isready -h localhost -p 6534"
+        # it takes a while for the database to start
+        retries: 50
+
     - name: Seed db1 with infrastructure links
       shell: bash
       run: |
