@@ -5,11 +5,6 @@ description:
 runs:
   using: "composite"
   steps:
-    - name: Set up PostgreSQL client
-      shell: bash
-      run: |
-        sudo apt-get -yqq install postgresql-client
-
     - name: Fetch infrastructure link dump
       shell: bash
       run: |
@@ -19,19 +14,19 @@ runs:
     - name: Seed db1 with infrastructure links
       shell: bash
       run: |
-        psql postgresql://dbadmin:adminpassword@localhost:6532/jore4e2e < infraLinks.sql
+        docker exec -i testdb psql postgresql://dbadmin:adminpassword@localhost:5432/jore4e2e < infraLinks.sql
 
     - name: Seed db2 with infrastructure links
       shell: bash
       run: |
-        psql postgresql://dbadmin:adminpassword@localhost:6533/jore4e2e < infraLinks.sql
+        docker exec -i testdb-e2e1 psql postgresql://dbadmin:adminpassword@localhost:5432/jore4e2e < infraLinks.sql
 
     - name: Seed db3 with infrastructure links
       shell: bash
       run: |
-        psql postgresql://dbadmin:adminpassword@localhost:6534/jore4e2e < infraLinks.sql
+        docker exec -i testdb-e2e2 psql postgresql://dbadmin:adminpassword@localhost:5432/jore4e2e < infraLinks.sql
 
     - name: Seed db4 with infrastructure links
       shell: bash
       run: |
-        psql postgresql://dbadmin:adminpassword@localhost:6432/jore4e2e < infraLinks.sql
+        docker exec -i testdb-e2e3 psql postgresql://dbadmin:adminpassword@localhost:5432/jore4e2e < infraLinks.sql
