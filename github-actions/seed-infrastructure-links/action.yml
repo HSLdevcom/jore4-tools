@@ -1,6 +1,11 @@
 name: "Seed infrastructure links"
 description:
   "Seeds infrastructure links needed in e2e tests"
+inputs:
+  db_connection_string:
+    description: Database connection string
+    required: false
+    default: "postgresql://dbadmin:adminpassword@localhost:5432/jore4e2e"
 
 runs:
   using: "composite"
@@ -11,50 +16,50 @@ runs:
         curl https://raw.githubusercontent.com/HSLdevcom/jore4-ui/main/test-db-manager/src/dumps/infraLinks/infraLinks.sql \
           -o infraLinks.sql
 
-    - name: Verify that postgresql is up and running
+    - name: Verify that testdb is up, running and migrated
       uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
       with:
-        command: "pg_isready -h localhost -p 6432"
+        command: "[[ $(docker exec testdb psql ${{ inputs.db_connection_string }} -AXqtc \"SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'infrastructure_network' AND tablename = 'infrastructure_link');\") = \"t\" ]]"
         # it takes a while for the database to start
         retries: 50
 
-    - name: Verify that postgresql testdb-e2e1 is up and running
+    - name: Verify that testdb-e2e1 is up, running and migrated
       uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
       with:
-        command: "pg_isready -h localhost -p 6532"
+        command: "[[ $(docker exec testdb-e2e1 psql ${{ inputs.db_connection_string }} -AXqtc \"SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'infrastructure_network' AND tablename = 'infrastructure_link');\") = \"t\" ]]"
+        # it takes a while for the database to start
+        retries: 50
+    
+    - name: Verify that testdb-e2e2 is up, running and migrated
+      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+      with:
+        command: "[[ $(docker exec testdb-e2e2 psql ${{ inputs.db_connection_string }} -AXqtc \"SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'infrastructure_network' AND tablename = 'infrastructure_link');\") = \"t\" ]]"
         # it takes a while for the database to start
         retries: 50
 
-    - name: Verify that postgresql testdb-e2e2 is up and running
+    - name: Verify that testdb-e2e3 is up, running and migrated
       uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
       with:
-        command: "pg_isready -h localhost -p 6533"
-        # it takes a while for the database to start
-        retries: 50
-
-    - name: Verify that postgresql testdb-e2e3 is up and running
-      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
-      with:
-        command: "pg_isready -h localhost -p 6534"
+        command: "[[ $(docker exec testdb-e2e3 psql ${{ inputs.db_connection_string }} -AXqtc \"SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'infrastructure_network' AND tablename = 'infrastructure_link');\") = \"t\" ]]"
         # it takes a while for the database to start
         retries: 50
 
     - name: Seed db1 with infrastructure links
       shell: bash
       run: |
-        docker exec -i testdb psql postgresql://dbadmin:adminpassword@localhost:5432/jore4e2e < infraLinks.sql
+        docker exec -i testdb psql ${{ inputs.db_connection_string }} < infraLinks.sql
 
     - name: Seed db2 with infrastructure links
       shell: bash
       run: |
-        docker exec -i testdb-e2e1 psql postgresql://dbadmin:adminpassword@localhost:5432/jore4e2e < infraLinks.sql
+        docker exec -i testdb-e2e1 psql ${{ inputs.db_connection_string }} < infraLinks.sql
 
     - name: Seed db3 with infrastructure links
       shell: bash
       run: |
-        docker exec -i testdb-e2e2 psql postgresql://dbadmin:adminpassword@localhost:5432/jore4e2e < infraLinks.sql
+        docker exec -i testdb-e2e2 psql ${{ inputs.db_connection_string }} < infraLinks.sql
 
     - name: Seed db4 with infrastructure links
       shell: bash
       run: |
-        docker exec -i testdb-e2e3 psql postgresql://dbadmin:adminpassword@localhost:5432/jore4e2e < infraLinks.sql
+        docker exec -i testdb-e2e3 psql ${{ inputs.db_connection_string }} < infraLinks.sql
