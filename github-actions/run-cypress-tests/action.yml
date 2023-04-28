@@ -10,22 +10,27 @@ inputs:
       it to ''.
     required: false
     default: "@smoke"
+  video:
+    description: 
+      Turn video on or off. Supported values are 'true' and 'false'.
+    required: false
+    default: 'false'
 
 runs:
   using: "composite"
   steps:
-    - name: Run all tests using the e2e docker bundle's cypress container
-      if: inputs.test-tags == ''
-      run: |
-        docker exec cypress \
-          bash -c "yarn test:e2e"
-      shell: bash
-
-    - name: Run tests that have the provided tags
-      if: startsWith(inputs.test-tags, '@')
+    - name: Run tests using the e2e docker bundle's cypress container
+      if: inputs.video == 'false'
       run: |
         docker exec cypress \
           bash -c "yarn test:e2e --env grepTags='${{ inputs.test-tags }}'"
+      shell: bash
+
+    - name: Run tests and enable video
+      if: inputs.video == 'true'
+      run: |
+        docker exec cypress \
+          bash -c "yarn test:e2e --config-file cypress.config.video.ts --env grepTags='${{ inputs.test-tags }}'"
       shell: bash
 
     - name: Retrieve test reports from container
