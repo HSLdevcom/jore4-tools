@@ -21,8 +21,6 @@ jobs:
         uses: ./github-actions/seed-infrastructure-links
 
       - name: Run e2e tests from github action
-        uses: ./github-actions/run-cypress-tests
+        uses: HSLdevcom/jore4-tools/github-actions/run-cypress-tests@run-cypress-tests-v1
         with:
-          threads: '3'
-          video: 'false'
           test-tags: ''
