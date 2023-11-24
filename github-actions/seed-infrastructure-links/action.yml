@@ -23,43 +23,7 @@ runs:
         # it takes a while for the database to start
         retries: 50
 
-    - name: Verify that testdb-e2e1 is up, running and migrated
-      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
-      with:
-        command: "[[ $(docker exec testdb-e2e1 psql ${{ inputs.db_connection_string }} -AXqtc \"SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'infrastructure_network' AND tablename = 'infrastructure_link');\") = \"t\" ]]"
-        # it takes a while for the database to start
-        retries: 50
-    
-    - name: Verify that testdb-e2e2 is up, running and migrated
-      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
-      with:
-        command: "[[ $(docker exec testdb-e2e2 psql ${{ inputs.db_connection_string }} -AXqtc \"SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'infrastructure_network' AND tablename = 'infrastructure_link');\") = \"t\" ]]"
-        # it takes a while for the database to start
-        retries: 50
-
-    - name: Verify that testdb-e2e3 is up, running and migrated
-      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
-      with:
-        command: "[[ $(docker exec testdb-e2e3 psql ${{ inputs.db_connection_string }} -AXqtc \"SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'infrastructure_network' AND tablename = 'infrastructure_link');\") = \"t\" ]]"
-        # it takes a while for the database to start
-        retries: 50
-
-    - name: Seed db1 with infrastructure links
+    - name: Seed db with infrastructure links
       shell: bash
       run: |
         docker exec -i testdb psql ${{ inputs.db_connection_string }} < infraLinks.sql
-
-    - name: Seed db2 with infrastructure links
-      shell: bash
-      run: |
-        docker exec -i testdb-e2e1 psql ${{ inputs.db_connection_string }} < infraLinks.sql
-
-    - name: Seed db3 with infrastructure links
-      shell: bash
-      run: |
-        docker exec -i testdb-e2e2 psql ${{ inputs.db_connection_string }} < infraLinks.sql
-
-    - name: Seed db4 with infrastructure links
-      shell: bash
-      run: |
-        docker exec -i testdb-e2e3 psql ${{ inputs.db_connection_string }} < infraLinks.sql
