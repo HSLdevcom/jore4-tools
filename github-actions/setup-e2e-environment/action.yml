@@ -136,27 +136,6 @@ runs:
         # it takes a while for the database to start
         retries: 50
 
-    - name: Verify that postgresql testdb-e2e1 is up and running
-      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
-      with:
-        command: "pg_isready -h localhost -p 6532"
-        # it takes a while for the database to start
-        retries: 50
-
-    - name: Verify that postgresql testdb-e2e2 is up and running
-      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
-      with:
-        command: "pg_isready -h localhost -p 6533"
-        # it takes a while for the database to start
-        retries: 50
-
-    - name: Verify that postgresql testdb-e2e3 is up and running
-      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
-      with:
-        command: "pg_isready -h localhost -p 6534"
-        # it takes a while for the database to start
-        retries: 50
-
     - name: Verify that mssql testdb is up and running
       uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
       env:
@@ -187,24 +166,6 @@ runs:
         command:
           "curl --fail http://localhost:3300/api/graphql/healthz --output
           /dev/null --silent"
-
-    - name: Verify that hasura e2e1 is up and running standalone
-      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
-      with:
-        command:
-          "curl --fail http://localhost:3211/healthz --output /dev/null --silent"
-
-    - name: Verify that hasura e2e2 is up and running standalone
-      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
-      with:
-        command:
-          "curl --fail http://localhost:3212/healthz --output /dev/null --silent"
-
-    - name: Verify that hasura e2e3 is up and running standalone
-      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
-      with:
-        command:
-          "curl --fail http://localhost:3213/healthz --output /dev/null --silent"
 
     - name: Verify that auth backend is up and running standalone
       uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
