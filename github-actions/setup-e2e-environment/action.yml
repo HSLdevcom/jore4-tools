@@ -4,8 +4,7 @@ description:
   running."
 inputs:
   bundle_version:
-    description:
-      Version of the docker-compose bundle to use (= github release version)
+    description: Version of the docker-compose bundle to use (= github release version)
     required: false
     default: "e2e-docker-compose"
   bundle_repo:
@@ -157,14 +156,12 @@ runs:
     - name: Verify that hasura is up and running standalone
       uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
       with:
-        command:
-          "curl --fail http://localhost:3201/healthz --output /dev/null --silent"
+        command: "curl --fail http://localhost:3201/healthz --output /dev/null --silent"
 
     - name: Verify that hasura is up and running through proxy
       uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
       with:
-        command:
-          "curl --fail http://localhost:3300/api/graphql/healthz --output
+        command: "curl --fail http://localhost:3300/api/graphql/healthz --output
           /dev/null --silent"
 
     - name: Verify that auth backend is up and running standalone
@@ -191,8 +188,7 @@ runs:
     - name: Verify that mbtiles server is up and running standalone
       uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
       with:
-        command:
-          "curl --fail http://localhost:3203/services --output /dev/null
+        command: "curl --fail http://localhost:3203/services --output /dev/null
           --silent"
 
     - name: Verify that mbtiles server is up and running through proxy
@@ -251,6 +247,12 @@ runs:
       uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
       with:
         command: "curl --fail http://localhost:3009/actuator/health --output
+          /dev/null --silent"
+
+    - name: Verify that tiamat is up and running standalone
+      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+      with:
+        command: "curl --fail http://localhost:3010/actuator/health --output
           /dev/null --silent"
 
     - name: Verify that all containers are healthy
