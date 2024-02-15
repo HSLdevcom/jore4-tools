@@ -268,6 +268,17 @@ runs:
         command: "curl --fail http://localhost:3010/actuator/health --output
           /dev/null --silent"
 
+    - name: Reload Hasura metadata to re-establish connection to Tiamat
+      env:
+        HASURA_PASSWORD: "hasura"
+      run: |
+        curl --header "Content-Type: application/json" \
+             --header "x-hasura-admin-secret: $HASURA_PASSWORD" \
+             --request POST \
+             --data '{"type":"reload_metadata","args":{"reload_remote_schemas":true,"reload_sources":false}}' \
+             localhost:3201/v1/metadata
+      shell: bash
+
     - name: Verify that all containers are healthy
       run: '[ -z "$(docker ps -q --filter health=unhealthy)" ]'
       shell: bash
