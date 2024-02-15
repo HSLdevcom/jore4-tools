@@ -77,6 +77,12 @@ inputs:
       the default version.
     required: false
     default: ""
+  timetablesapi_version:
+    description:
+      Version of timetables api to use (docker image tag). Set to "" if using
+      the default version.
+    required: false
+    default: ""
   custom_docker_compose:
     description:
       Path for an additional docker-compose file to be used when starting up the
@@ -110,6 +116,7 @@ runs:
         MAPMATCHINGDB_DOCKER_IMAGE: ${{ inputs.mapmatchingdb_version }}
         CYPRESS_DOCKER_IMAGE: ${{ inputs.cypress_version }}
         HASTUS_DOCKER_IMAGE: ${{ inputs.hastus_version }}
+        TIMETABLESAPI_DOCKER_IMAGE: ${{ inputs.timetablesapi_version }}
       run: |
         docker-compose -f ${{ github.workspace }}/docker/docker-compose.yml ${{ inputs.custom_docker_compose != '' && format('-f {0}', inputs.custom_docker_compose) || '' }} up -d
       shell: bash
