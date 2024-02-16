@@ -1,0 +1,22 @@
+name: "Reload Hasura metadata"
+description: "Reloads Hasura metadata to ensure all remote schemas and databases
+  are connected properly."
+inputs:
+  hasura_password:
+    description: Password of the e2e hasura instance
+    required: false
+    default: "hasura"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Reload Hasura metadata to re-establish connections
+      env:
+        HASURA_PASSWORD: ${{ inputs.hasura_password }}
+      run: |
+        curl --header "Content-Type: application/json" \
+             --header "x-hasura-admin-secret: $HASURA_PASSWORD" \
+             --request POST \
+             --data '{"type":"reload_metadata","args":{"reload_remote_schemas":true,"reload_sources":true}}' \
+             localhost:3201/v1/metadata
+      shell: bash
