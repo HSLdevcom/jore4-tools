@@ -65,6 +65,8 @@ RUN curl -o /tmp/read-secrets.sh "https://raw.githubusercontent.com/HSLdevcom/jo
 CMD /bin/bash -c "source /tmp/read-secrets.sh && java -jar /.../xxx.jar"
 ```
 
+If the SKIP_SET_VARIABLE_SECRET_OVERRIDE environment variable is set, pre-exisiting values will not be overriden by secrets.
+
 ### download-docker-bundle.sh
 
 Downloads and extract the latest version of the docker bundle. It uses the `gh` github command line tool to retrieve the bundle from the releases.
