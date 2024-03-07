@@ -32,7 +32,7 @@ for SECRET_FILENAME in $(ls "$SECRET_STORE_BASE_PATH");
 do
     # replace non-alphanumeric characters with _ and convert to uppercase
     VAR_NAME=$(echo $SECRET_FILENAME | sed -E 's/[^a-zA-Z0-9]+/_/g' | tr a-z A-Z)
-    if [ ! -z "$SKIP_SET_VARIABLE_SECRET_OVERRIDE" ] && [ ! -z "$(printenv $VAR_NAME)" ]; then
+    if [ ! -z "${SKIP_SET_VARIABLE_SECRET_OVERRIDE-}" ] && [ ! -z "$(printenv $VAR_NAME)" ]; then
         echo "Secret environment value override disabled. Used existing value for '$VAR_NAME' environment variable."
     else
         VAR_VALUE=$(cat "$SECRET_STORE_BASE_PATH/$SECRET_FILENAME")
