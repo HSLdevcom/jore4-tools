@@ -1,0 +1,29 @@
+name: "Seed municipalities and fare zones"
+description: "Seeds municipalities and fare zones needed in e2e tests"
+inputs:
+  tiamat_import_endpoint:
+    description: Import endpoint of Tiamat
+    required: false
+    default: "localhost:3010/services/stop_places/netex"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Fetch netex import file
+      shell: bash
+      run: |
+        curl https://github.com/HSLdevcom/jore4-ui/raw/main/netex/hsl-zones-netex.xml \
+          -o hsl-zones-netex.xml
+
+    - name: Verify that tiamat is up and wait if needed
+      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+      with:
+        command: "curl --fail http://localhost:3010/actuator/health --output
+          /dev/null --silent"
+        retries: 50
+
+    - name: Seed db with municipalities and fare zones
+      shell: bash
+      run: |
+        curl --silent --output /dev/null --show-error --fail -X POST -H"Content-Type: application/xml" \
+          -d @hsl-zones-netex.xml ${{ inputs.tiamat_import_endpoint }}
