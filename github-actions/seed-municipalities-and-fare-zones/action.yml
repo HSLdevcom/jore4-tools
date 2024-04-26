@@ -13,6 +13,7 @@ runs:
       shell: bash
       run: |
         curl https://github.com/HSLdevcom/jore4-ui/raw/main/netex/hsl-zones-netex.xml \
+          -L \
           -o hsl-zones-netex.xml
 
     - name: Verify that tiamat is up and wait if needed
