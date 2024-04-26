@@ -12,7 +12,7 @@ runs:
     - name: Fetch netex import file
       shell: bash
       run: |
-        curl https://github.com/HSLdevcom/jore4-ui/raw/main/netex/hsl-zones-netex.xml \
+        curl https://raw.githubusercontent.com/HSLdevcom/jore4-ui/main/netex/hsl-zones-netex.xml \
           -o hsl-zones-netex.xml
 
     - name: Verify that tiamat is up and wait if needed
