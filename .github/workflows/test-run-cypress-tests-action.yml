@@ -20,6 +20,9 @@ jobs:
       - name: Seed infrastructure links
         uses: ./github-actions/seed-infrastructure-links
 
+      - name: Seed municipalities and fare zones
+        uses: ./github-actions/seed-municipalities-and-fare-zones
+
       - name: Run e2e tests from github action
         # We need to reference the remote version of this repository to be able to use specific branches or tags
         uses: HSLdevcom/jore4-tools/github-actions/run-cypress-tests@run-cypress-tests-v1
