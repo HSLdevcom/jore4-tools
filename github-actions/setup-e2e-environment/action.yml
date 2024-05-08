@@ -276,7 +276,7 @@ runs:
         curl --header "Content-Type: application/json" \
              --header "x-hasura-admin-secret: $HASURA_PASSWORD" \
              --request POST \
-             --data '{"type":"reload_metadata","args":{"reload_remote_schemas":true,"reload_sources":false}}' \
+             --data '{"type":"reload_metadata","args":{"reload_remote_schemas":true,"reload_sources":true}}' \
              localhost:3201/v1/metadata
       shell: bash
 
