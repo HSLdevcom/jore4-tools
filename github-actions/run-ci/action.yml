@@ -1,0 +1,149 @@
+name: "Run CI workflow"
+description: "Setup the e2e environment and run cypress tests in it"
+inputs:
+  bundle_version:
+    description: Version of the docker-compose bundle to use (= github release version)
+    required: false
+    default: "e2e-docker-compose"
+  bundle_repo:
+    description: Repository to retrieve the bundle from
+    required: false
+    default: "HSLdevcom/jore4-tools"
+  ui_version:
+    description:
+      Version of ui to use (docker image tag). Set to "" if using the default
+      version.
+    required: false
+    default: ""
+  hasura_version:
+    description:
+      Version of hasura to use (docker image tag). Set to "" if using the
+      default version.
+    required: false
+    default: ""
+  auth_version:
+    description:
+      Version of auth to use (docker image tag). Set to "" if using the default
+      version.
+    required: false
+    default: ""
+  mbtiles_version:
+    description:
+      Version of mbtiles server to use (docker image tag). Set to "" if using
+      the default version.
+    required: false
+    default: ""
+  jore3importer_version:
+    description:
+      Version of jore3importer to use (docker image tag). Set to "" if using the
+      default version.
+    required: false
+    default: ""
+  testdb_version:
+    description:
+      Version of testdb to use (docker image tag). Set to "" if using the
+      default version.
+    required: false
+    default: ""
+  mssqltestdb_version:
+    description:
+      Version of mssqltestdb to use (docker image tag). Set to "" if using the
+      default version.
+    required: false
+    default: ""
+  mapmatching_version:
+    description:
+      Version of map matching service to use (docker image tag). Set to "" if
+      using the default version.
+    required: false
+    default: ""
+  mapmatchingdb_version:
+    description:
+      Version of map matching database to use (docker image tag). Set to "" if
+      using the default version.
+    required: false
+    default: ""
+  cypress_version:
+    description:
+      Version of cypress tests to use (docker image tag). Set to "" if using the
+      default version.
+    required: false
+    default: ""
+  hastus_version:
+    description:
+      Version of hastus importer to use (docker image tag). Set to "" if using
+      the default version.
+    required: false
+    default: ""
+  timetablesapi_version:
+    description:
+      Version of timetables api to use (docker image tag). Set to "" if using
+      the default version.
+    required: false
+    default: ""
+  tiamat_version:
+    description: Version of tiamat to use (docker image tag). Set to "" if using
+      the default version.
+    required: false
+    default: ""
+  custom_docker_compose:
+    description:
+      Path for an additional docker-compose file to be used when starting up the
+      environment. Can be used to e.g. run tests with the repository's own
+      docker-compose.custom.yml setup
+    required: false
+    default: ""
+  test-tags:
+    description:
+      Specify a string of tags for tests to be run in format '@smoke'. To
+      specify multiple tags, use format '@routes @smoke'. To run all tests, set
+      it to ''.
+    required: false
+    default: "@smoke"
+  cypress_tests_kept_in_memory:
+    description: Environment setting to set for running cypress tests.
+    required: false
+    default: 5
+runs:
+  using: composite
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Extract metadata to env variables
+      uses: HSLdevcom/jore4-tools/github-actions/extract-metadata@extract-metadata-v1
+
+    - name: Start e2e env
+      uses: HSLdevcom/jore4-tools/github-actions/setup-e2e-environment@setup-e2e-environment-v5
+      with:
+        ui_version: "${{ inputs.ui_version }}"
+        cypress_version: "${{ inputs.cypress_version }}"
+        bundle_version: "${{ inputs.bundle_version }}"
+        bundle_repo: "${{ inputs.bundle_repo }}"
+        hasura_version: "${{ inputs.hasura_version }}"
+        auth_version: "${{ inputs.auth_version }}"
+        mbtiles_version: "${{ inputs.mbtiles_version }}"
+        jore3importer_version: "${{ inputs.jore3importer_version }}"
+        testdb_version: "${{ inputs.testdb_version }}"
+        mssqltestdb_version: "${{ inputs.mssqltestdb_version }}"
+        mapmatching_version: "${{ inputs.mapmatching_version }}"
+        mapmatchingdb_version: "${{ inputs.mapmatchingdb_version }}"
+        hastus_version: "${{ inputs.hastus_version }}"
+        timetablesapi_version: "${{ inputs.timetablesapi_version }}"
+        tiamat_version: "${{ inputs.tiamat_version }}"
+        custom_docker_compose: "${{ inputs.custom_docker_compose }}"
+
+    - name: Seed infrastructure links
+      uses: HSLdevcom/jore4-tools/github-actions/seed-infrastructure-links@seed-infrastructure-links-v2
+
+    - name: Seed municipalities and fare zones
+      uses: HSLdevcom/jore4-tools/github-actions/seed-municipalities-and-fare-zones@seed-municipalities-and-fare-zones-v1
+
+    - name: Run e2e tests
+      env:
+        CYPRESS_TESTS_KEPT_IN_MEMORY: "${{ inputs.cypress_tests_kept_in_memory }}"
+      uses: HSLdevcom/jore4-tools/github-actions/run-cypress-tests@run-cypress-tests-v1
+      with:
+        test-tags: "${{ inputs.test-tags }}"
