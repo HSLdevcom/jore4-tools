@@ -11,20 +11,11 @@ jobs:
     runs-on: ubuntu-latest-4-cores
 
     steps:
+      # Even though code checking is part of the "run-ci" action, it must be done separately here, because "run-ci" is located in this same repository.
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Start e2e env
-        uses: ./github-actions/setup-e2e-environment
-
-      - name: Seed infrastructure links
-        uses: ./github-actions/seed-infrastructure-links
-
-      - name: Seed municipalities and fare zones
-        uses: ./github-actions/seed-municipalities-and-fare-zones
-
-      - name: Run e2e tests from github action
-        # We need to reference the remote version of this repository to be able to use specific branches or tags
-        uses: HSLdevcom/jore4-tools/github-actions/run-cypress-tests@run-cypress-tests-v1
+      - name: Setup environment and run e2e tests from github action
+        uses: ./github-actions/run-ci
         with:
-          test-tags: ''
+          test-tags: ""
