@@ -8,11 +8,11 @@ on:
 jobs:
   verify-doctoc:
     name: Verifies whether table of contents has been updated
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Run doctoc on README
         run: npx doctoc README.md
