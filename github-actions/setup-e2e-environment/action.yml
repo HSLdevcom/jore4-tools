@@ -124,7 +124,7 @@ runs:
         TIMETABLESAPI_DOCKER_IMAGE: ${{ inputs.timetablesapi_version }}
         TIAMAT_DOCKER_IMAGE: ${{ inputs.tiamat_version }}
       run: |
-        docker-compose -f ${{ github.workspace }}/docker/docker-compose.yml ${{ inputs.custom_docker_compose != '' && format('-f {0}', inputs.custom_docker_compose) || '' }} up -d
+        docker compose -f ${{ github.workspace }}/docker/docker-compose.yml ${{ inputs.custom_docker_compose != '' && format('-f {0}', inputs.custom_docker_compose) || '' }} up -d
       shell: bash
 
     - name: Show which versions of the docker images are spun up

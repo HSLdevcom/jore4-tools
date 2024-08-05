@@ -95,19 +95,19 @@ set -euo pipefail
 curl https://raw.githubusercontent.com/HSLdevcom/jore4-tools/main/docker/download-docker-bundle.sh | bash
 
 # start up some dependency services (and build on-demand) in the background
-docker-compose -f ./docker/docker-compose.yml up -d jore4-testdb jore4-hasura jore4-auth
+docker compose -f ./docker/docker-compose.yml up -d jore4-testdb jore4-hasura jore4-auth
 
 # start up some dependency services with some overrides (e.g. pinned docker image versions) in a docker-compose.custom.yml file and build on demand (if using own repo's Dockerfile too)
-docker-compose -f ./docker/docker-compose.yml -f ./docker/docker-compose.custom.yml up --build jore4-testdb jore4-hasura jore4-auth
+docker compose -f ./docker/docker-compose.yml -f ./docker/docker-compose.custom.yml up --build jore4-testdb jore4-hasura jore4-auth
 
-# more info on docker-compose up command: https://docs.docker.com/engine/reference/commandline/compose_up/
+# more info on docker compose up command: https://docs.docker.com/reference/cli/docker/compose/up/
 ```
 
 To overwrite some values in the generic docker-compose config, you could use
-[docker-compose overrides](https://docs.docker.com/compose/extends/#multiple-compose-files)
+[docker compose overrides](https://docs.docker.com/compose/extends/#multiple-compose-files)
 
 To use your local repository version of the docker image instead of the e2e version, you could use
-[docker-compose local build](https://docs.docker.com/compose/compose-file/compose-file-v3/#build)
+[docker compose local build](https://docs.docker.com/compose/compose-file/compose-file-v3/#build)
 
 To run your service locally e.g. in Maven and then point services within the docker-compose network
 to use this natively running service, you could use
