@@ -95,6 +95,10 @@ inputs:
       docker-compose.custom.yml setup
     required: false
     default: ""
+  start_jore3_importer:
+    description: Should Jore3 importer be started along the rest of the e2e environment.
+    required: false
+    default: "false"
 
 runs:
   using: "composite"
@@ -124,7 +128,7 @@ runs:
         TIMETABLESAPI_DOCKER_IMAGE: ${{ inputs.timetablesapi_version }}
         TIAMAT_DOCKER_IMAGE: ${{ inputs.tiamat_version }}
       run: |
-        docker compose -f ${{ github.workspace }}/docker/docker-compose.yml ${{ inputs.custom_docker_compose != '' && format('-f {0}', inputs.custom_docker_compose) || '' }} up -d
+        docker compose -f ${{ github.workspace }}/docker/docker-compose.yml ${{ inputs.custom_docker_compose != '' && format('-f {0}', inputs.custom_docker_compose) || '' }} ${{ inputs.start_jore3_importer == 'true' && '--profile importer' || '' }} up -d
       shell: bash
 
     - name: Show which versions of the docker images are spun up
@@ -149,6 +153,7 @@ runs:
         retries: 50
 
     - name: Verify that mssql testdb is up and running
+      if: ${{ inputs.start_jore3_importer == 'true' }}
       uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
       env:
         SA_PASSWORD: "P@ssw0rd"
@@ -212,6 +217,7 @@ runs:
           /dev/null --silent"
 
     - name: Verify that jore3 importer is up and running standalone
+      if: ${{ inputs.start_jore3_importer == 'true' }}
       uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
       with:
         command:
