@@ -93,6 +93,10 @@ inputs:
       docker-compose.custom.yml setup
     required: false
     default: ""
+  start_jore3_importer:
+    description: Should Jore3 importer be started along the rest of the e2e environment.
+    required: false
+    default: "false"
   test-tags:
     description:
       Specify a string of tags for tests to be run in format '@smoke'. To
@@ -116,7 +120,7 @@ runs:
       uses: HSLdevcom/jore4-tools/github-actions/extract-metadata@extract-metadata-v1
 
     - name: Start e2e env
-      uses: HSLdevcom/jore4-tools/github-actions/setup-e2e-environment@setup-e2e-environment-v6
+      uses: HSLdevcom/jore4-tools/github-actions/setup-e2e-environment@setup-e2e-environment-v7
       with:
         ui_version: "${{ inputs.ui_version }}"
         cypress_version: "${{ inputs.cypress_version }}"
@@ -134,6 +138,7 @@ runs:
         timetablesapi_version: "${{ inputs.timetablesapi_version }}"
         tiamat_version: "${{ inputs.tiamat_version }}"
         custom_docker_compose: "${{ inputs.custom_docker_compose }}"
+        start_jore3_importer: "${{ inputs.start_jore3_importer }}"
 
     - name: Seed infrastructure links
       uses: HSLdevcom/jore4-tools/github-actions/seed-infrastructure-links@seed-infrastructure-links-v2
