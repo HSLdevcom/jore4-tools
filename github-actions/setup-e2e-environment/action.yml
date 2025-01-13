@@ -3,14 +3,6 @@ description:
   "Builds e2e environment with docker-compose and tests that services are
   running."
 inputs:
-  bundle_version:
-    description: Version of the docker-compose bundle to use (= github release version)
-    required: false
-    default: "e2e-docker-compose"
-  bundle_repo:
-    description: Repository to retrieve the bundle from
-    required: false
-    default: "HSLdevcom/jore4-tools"
   ui_version:
     description:
       Version of ui to use (docker image tag). Set to "" if using the default
@@ -106,7 +98,7 @@ runs:
     - name: Download and extract e2e docker-compose release
       run: |
         mkdir -p ${{ github.workspace }}/docker
-        curl -L https://github.com/HSLdevcom/jore4-tools/releases/download/${{ inputs.bundle_version }}/e2e-docker-compose.tar.gz --silent -o compose-bundle.tar.gz
+        curl -L https://github.com/HSLdevcom/jore4-tools/releases/download/e2e-docker-compose/e2e-docker-compose.tar.gz --silent -o compose-bundle.tar.gz
         tar -xzf compose-bundle.tar.gz -C ${{ github.workspace }}/docker/ | bash
         rm compose-bundle.tar.gz
       shell: bash

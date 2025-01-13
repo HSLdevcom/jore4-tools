@@ -1,10 +1,6 @@
 name: "Run CI workflow"
 description: "Setup the e2e environment and run cypress tests in it"
 inputs:
-  bundle_version:
-    description: Version of the docker-compose bundle to use (= github release version)
-    required: false
-    default: "e2e-docker-compose"
   bundle_repo:
     description: Repository to retrieve the bundle from
     required: false
@@ -124,7 +120,6 @@ runs:
       with:
         ui_version: "${{ inputs.ui_version }}"
         cypress_version: "${{ inputs.cypress_version }}"
-        bundle_version: "${{ inputs.bundle_version }}"
         bundle_repo: "${{ inputs.bundle_repo }}"
         hasura_version: "${{ inputs.hasura_version }}"
         auth_version: "${{ inputs.auth_version }}"
