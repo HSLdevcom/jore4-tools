@@ -98,9 +98,12 @@ runs:
     - name: Download and extract e2e docker-compose release
       run: |
         mkdir -p ${{ github.workspace }}/docker
-        curl -L https://github.com/HSLdevcom/jore4-tools/releases/download/e2e-docker-compose/e2e-docker-compose.tar.gz --silent -o compose-bundle.tar.gz
-        tar -xzf compose-bundle.tar.gz -C ${{ github.workspace }}/docker/ | bash
-        rm compose-bundle.tar.gz
+        curl -L https://github.com/HSLdevcom/jore4-docker-compose-bundle/archive/refs/heads/main.tar.gz \
+          | tar \
+            -xz \
+            -C ${{ github.workspace }}/docker \
+            --strip-components 2 \
+            --wildcards 'jore4-docker-compose-bundle-main/docker-compose/*'
       shell: bash
 
     - name: Start e2e environment
