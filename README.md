@@ -161,8 +161,6 @@ can set given services' docker image versions.
 To see how docker-compose bundle is created and used, refer to [wiki](https://github.com/HSLdevcom/jore4/wiki/Infra#docker-compose-bundle)
 
 Parameters:
-- bundle_version: Version of the docker-compose bundle to use (= github release version)
-- bundle_repo: The repository from whose releases the docker-compose bundle is to be downloaded
 - custom_docker_compose: Path for an additional docker-compose file to be used when starting up the environment.
 - ui_version, hasura_version, ... (*_version): Specific the docker image tag of the microservice to be used. For all options, see `/github-actions/setup-e2e-environment/action.yml`
 
