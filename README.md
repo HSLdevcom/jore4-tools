@@ -170,14 +170,14 @@ Example usage:
 steps:
 - uses: HSLdevcom/jore4-tools/github-actions/extract-metadata@extract-metadata-v1
 
-- uses: HSLdevcom/jore4-tools/github-actions/setup-e2e-environment@setup-e2e-environment-v1
+- uses: HSLdevcom/jore4-tools/github-actions/setup-e2e-environment@setup-e2e-environment-v8
   with:
     ui_version: '${{ env.IMAGE_NAME }}:${{ env.COMMIT_ID }}'
 ```
 
 ```
 steps:
-- uses: HSLdevcom/jore4-tools/github-actions/setup-e2e-environment@setup-e2e-environment-v1
+- uses: HSLdevcom/jore4-tools/github-actions/setup-e2e-environment@setup-e2e-environment-v8
   with:
     custom_docker_compose: ./docker/docker-compose.custom.yml
 ```
@@ -197,7 +197,7 @@ Example usage:
 
 ```
 steps:
-- uses: HSLdevcom/jore4-tools/github-actions/setup-e2e-environment@setup-e2e-environment-v1
+- uses: HSLdevcom/jore4-tools/github-actions/setup-e2e-environment@setup-e2e-environment-v8
 - uses: HSLdevcom/jore4-tools/github-actions/run-cypress-tests@run-cypress-tests-v1
 ```
 
@@ -205,7 +205,7 @@ steps:
 steps:
 - uses: HSLdevcom/jore4-tools/github-actions/extract-metadata@extract-metadata-v1
 
-- uses: HSLdevcom/jore4-tools/github-actions/setup-e2e-environment@setup-e2e-environment-v1
+- uses: HSLdevcom/jore4-tools/github-actions/setup-e2e-environment@setup-e2e-environment-v8
   with:
     ui_version: '${{ env.IMAGE_NAME }}:${{ env.COMMIT_ID }}'
 
