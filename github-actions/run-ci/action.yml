@@ -1,10 +1,6 @@
 name: "Run CI workflow"
 description: "Setup the e2e environment and run cypress tests in it"
 inputs:
-  bundle_repo:
-    description: Repository to retrieve the bundle from
-    required: false
-    default: "HSLdevcom/jore4-tools"
   ui_version:
     description:
       Version of ui to use (docker image tag). Set to "" if using the default
@@ -120,7 +116,6 @@ runs:
       with:
         ui_version: "${{ inputs.ui_version }}"
         cypress_version: "${{ inputs.cypress_version }}"
-        bundle_repo: "${{ inputs.bundle_repo }}"
         hasura_version: "${{ inputs.hasura_version }}"
         auth_version: "${{ inputs.auth_version }}"
         mbtiles_version: "${{ inputs.mbtiles_version }}"
