@@ -5,7 +5,7 @@ description:
 inputs:
   bundle_version:
     description:
-      Version of the docker-compose bundle to use (= github release version)
+      Version of the Docker Compose bundle to use (= github release version)
     required: false
     default: "e2e-docker-compose"
   ui_version:
@@ -76,7 +76,7 @@ inputs:
     default: ""
   custom_docker_compose:
     description:
-      Path for an additional docker-compose file to be used when starting up the
+      Path for an additional Docker Compose file to be used when starting up the
       environment. Can be used to e.g. run tests with the repository's own
       docker-compose.custom.yml setup
     required: false
@@ -85,7 +85,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Download and extract e2e docker-compose release
+    - name: Download and extract e2e Docker Compose release
       run: |
         mkdir -p ${{ github.workspace }}/docker
         curl -L https://github.com/HSLdevcom/jore4-tools/releases/download/${{ inputs.bundle_version }}/e2e-docker-compose.tar.gz --silent -o compose-bundle.tar.gz
@@ -94,7 +94,7 @@ runs:
       shell: bash
 
     - name: Start e2e environment
-      # use environment variables within the docker-compose bundle to override some images
+      # use environment variables within the Docker Compose bundle to override some images
       env:
         UI_DOCKER_IMAGE: ${{ inputs.ui_version }}
         HASURA_DOCKER_IMAGE: ${{ inputs.hasura_version }}

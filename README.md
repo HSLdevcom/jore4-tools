@@ -67,7 +67,7 @@ CMD /bin/bash -c "source /tmp/read-secrets.sh && java -jar /.../xxx.jar"
 
 Downloads and extract the latest version of the docker bundle. It uses the `gh` github command line tool to retrieve the bundle from the releases.
 
-To see how docker-compose bundle is created and used, refer to [wiki](https://github.com/HSLdevcom/jore4/wiki/Infra#docker-compose-bundle)
+To see how Docker compose bundle is created and used, refer to [wiki](https://github.com/HSLdevcom/jore4/wiki/Infra#docker-compose-bundle)
 
 Parameters:
 - with the `DOCKER_BUNDLE_PATH` environment variable you can set the destination folder to where the bundle is downloaded. Default "./docker"
@@ -139,14 +139,14 @@ steps:
 
 ### setup-e2e-environment
 
-Retrieves a given version of the docker-compose bundle from the releases and runs it. Optionally
+Retrieves a given version of the Docker Compose bundle from the releases and runs it. Optionally
 can set given services' docker image versions.
 
-To see how docker-compose bundle is created and used, refer to [wiki](https://github.com/HSLdevcom/jore4/wiki/Infra#docker-compose-bundle)
+To see how Docker Compose bundle is created and used, refer to [wiki](https://github.com/HSLdevcom/jore4/wiki/Infra#docker-compose-bundle)
 
 Parameters:
-- bundle_version: Version of the docker-compose bundle to use (= github release version)
-- custom_docker_compose: Path for an additional docker-compose file to be used when starting up the environment.
+- bundle_version: Version of the Docker Compose bundle to use (= github release version)
+- custom_docker_compose: Path for an additional Docker Compose file to be used when starting up the environment.
 - ui_version, hasura_version, ... (*_version): Specific the docker image tag of the microservice to be used. For all options, see `/github-actions/setup-e2e-environment/action.yml`
 
 Example usage:
@@ -173,7 +173,7 @@ Runs cypress e2e tests. It assumes that a container with the name `cypress` is a
 is parameterized to access all the tested containers. Best combine with the `setup-e2e-environment`
 action as the docker bundle already contains the latest version of the cypress tests.
 
-To see how docker-compose bundle is created and used, refer to [wiki](https://github.com/HSLdevcom/jore4/wiki/Infra#docker-compose-bundle)
+To see how Docker Compose bundle is created and used, refer to [wiki](https://github.com/HSLdevcom/jore4/wiki/Infra#docker-compose-bundle)
 
 Parameters:
 - test-tags: Specify which e2e tests to run. `""` to run all, `"@smoke @routes"` to run with given tags. Default: `"@smoke"`

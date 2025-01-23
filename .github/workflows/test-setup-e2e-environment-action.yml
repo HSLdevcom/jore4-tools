@@ -38,7 +38,7 @@ jobs:
             cypress-docker-image:
             hastus-docker-image:
             custom-docker-compose:
-          # use custom docker-compose file
+          # use custom Docker Compose file
           - ui-docker-image:
             hasura-docker-image:
             auth-docker-image:
