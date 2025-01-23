@@ -1,6 +1,6 @@
 name: "Start e2e environment"
 description:
-  "Builds e2e environment with docker-compose and tests that services are
+  "Builds e2e environment with docker compose and tests that services are
   running."
 inputs:
   bundle_version:
@@ -108,7 +108,7 @@ runs:
         CYPRESS_DOCKER_IMAGE: ${{ inputs.cypress_version }}
         HASTUS_DOCKER_IMAGE: ${{ inputs.hastus_version }}
       run: |
-        docker-compose -f ${{ github.workspace }}/docker/docker-compose.yml ${{ inputs.custom_docker_compose != '' && format('-f {0}', inputs.custom_docker_compose) || '' }} up -d
+        docker compose -f ${{ github.workspace }}/docker/docker-compose.yml ${{ inputs.custom_docker_compose != '' && format('-f {0}', inputs.custom_docker_compose) || '' }} up -d
       shell: bash
 
     - name: Show which versions of the docker images are spun up
