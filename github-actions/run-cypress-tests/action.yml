@@ -10,13 +10,8 @@ inputs:
       it to ''.
     required: false
     default: "@smoke"
-  threads:
-    description:
-      Amount of parallel executors. Supported values are 1-3.
-    required: false
-    default: "1"
   video:
-    description: 
+    description:
       Turn video on or off. Supported values are 'true' and 'false'.
     required: false
     default: 'false'
@@ -25,19 +20,11 @@ runs:
   using: "composite"
   steps:
     - name: Run the tests
-      if: inputs.video == 'false'
       run: |
-        docker exec cypress \
-          bash -c "yarn ws:db build && yarn ws:e2e cypress-parallel --script cy:run --threads ${{ inputs.threads }} \
-          --verbose --reporterModulePath '../node_modules/cypress-multi-reporters' --specsDir 'e2e/*.cy.ts' --weightsJson './parallel-weights.json'"
-      shell: bash
-
-    - name: Run the tests and record video
-      if: inputs.video == 'true'
-      run: |
-        docker exec cypress \
-          bash -c "yarn ws:db build && yarn ws:e2e cypress-parallel --script cy:run:video --threads ${{ inputs.threads }} \
-          --verbose --reporterModulePath '../node_modules/cypress-multi-reporters' --specsDir 'e2e/*.cy.ts' --weightsJson './parallel-weights.json'"
+        docker exec \
+          -e TEST_TAGS="${{ inputs.test-tags }}" \
+          -e TEST_VIDEO="${{ inputs.video }}" \
+          cypress /e2e/cypress/run_cypress_in_4K_xvfb.sh
       shell: bash
 
     - name: Retrieve test reports from container
@@ -53,8 +40,7 @@ runs:
       uses: actions/upload-artifact@v4
       with:
         name: cypress-docker-reports
-        path: |
-          ${{ github.workspace }}/test-reports
+        path: ${{ github.workspace }}/test-reports
 
     - name: Fail the job
       # should fail the job if the tests fail
