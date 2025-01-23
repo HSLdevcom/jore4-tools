@@ -139,6 +139,6 @@ runs:
     - name: Run e2e tests
       env:
         CYPRESS_TESTS_KEPT_IN_MEMORY: "${{ inputs.cypress_tests_kept_in_memory }}"
-      uses: HSLdevcom/jore4-tools/github-actions/run-cypress-tests@run-cypress-tests-v1
+      uses: HSLdevcom/jore4-tools/github-actions/run-cypress-tests@run-cypress-tests-v3
       with:
         test-tags: "${{ inputs.test-tags }}"
