@@ -95,7 +95,7 @@ inputs:
       specify multiple tags, use format '@routes @smoke'. To run all tests, set
       it to ''.
     required: false
-    default: "@smoke"
+    default: ""
   cypress_tests_kept_in_memory:
     description: Environment setting to set for running cypress tests.
     required: false

@@ -9,7 +9,7 @@ inputs:
       specify multiple tags, use format '@routes @smoke'. To run all tests, set
       it to ''.
     required: false
-    default: "@smoke"
+    default: ""
   video:
     description:
       Turn video on or off. Supported values are 'true' and 'false'.
