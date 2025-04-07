@@ -9,6 +9,8 @@ Tools which are commonly used by other JORE4 projects
 - [Tools for Docker](#tools-for-docker)
   - [read-secrets.sh](#read-secretssh)
   - [download-docker-bundle.sh](#download-docker-bundlesh)
+- [Reusable Github Workflows](#reusable-github-workflows)
+  - [shared-build-and-publish-docker-image](#shared-build-and-publish-docker-image)
 - [Github Actions](#github-actions)
   - [extract-metadata](#extract-metadata)
   - [healthcheck](#healthcheck)
@@ -114,6 +116,51 @@ to use this natively running service, you could use
 [host.docker.internal](https://docs.docker.com/desktop/windows/networking/#per-container-ip-addressing-is-not-possible).
 For this, the `extra_hosts` parameter is already set for every service within the docker-compose
 package.
+
+## Reusable Github Workflows
+
+### shared-build-and-publish-docker-image
+
+Builds and publishes Docker image to ACR (Azure Container Registry).
+
+The workflow uses workload identity federation (see https://learn.microsoft.com/en-us/entra/workload-id/workload-identity-federation),
+i.e. there needs to be an user managed identity with federated credentials allowing the GitHub Actions workflow to federate its
+identity.
+
+The workflow updates *latest* and *cache* image if the workflow has been triggered by ref update to *main* branch.
+
+Arguments:
+
+- `acr_name` (optional): Name of the ACR registry to use. By default crjore4prod001
+- `docker_image_name` (required): Name of the Docker image in ACR
+- `build_arm64_image` (optional): Set to `true` if ARM64 image should be build in addition to amd64 image
+- `context` (optional): Set the build context which must be a Git context, i.e. reference to a Git repository as the
+  workflow does not checkout the repository. For supported format see https://docs.docker.com/build/concepts/context/#url-fragments
+  The parameter is passed to docker/build-push-action's context argument which by default uses format
+  `<github_server_url>/<organization>/<repository>.git/#<ref>` (see https://github.com/docker/actions-toolkit/blob/v0.56.0/src/context.ts#L58)
+
+The workflow uses the following credentials:
+
+- `azure_tenant_id`: Azure tentant ID
+- `azure_subscription_id`: Azure subscription containing the user managed identity
+- `azure_client_id`: Client ID of the user managed identity in Azure to which the workflow has federated credentials
+
+Example usage:
+
+```yaml
+docker-image:
+name: Publish Docker image to ACR
+permissions:
+  id-token: write
+  contents: read
+uses: HSLdevcom/jore4-tools/.github/workflows/shared-build-and-publish-docker-image.yml@build-and-publish-docker-image-v1
+with:
+  docker_image_name: my-docker-image-name
+secrets:
+  azure_client_id: ${{ secrets.AZURE_CLIENT_ID }}
+  azure_tenant_id: ${{ secrets.AZURE_TENANT_ID }}
+  azure_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+```
 
 ## Github Actions
 
