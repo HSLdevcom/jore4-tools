@@ -1,0 +1,88 @@
+---
+name: Build and publish Docker Image
+
+on:
+  workflow_call:
+    inputs:
+      acr_name:
+        type: string
+        default: crjore4prod001
+      docker_image_name:
+        type: string
+        required: true
+      build_arm64_image:
+        description: Should arm64 Docker image be built
+        type: boolean
+        required: false
+        default: false
+    secrets:
+      azure_tenant_id:
+        required: true
+      azure_subscription_id:
+        required: true
+      azure_client_id:
+        required: true
+    outputs:
+      docker_image:
+        description: Docker image with tag
+        value: ${{ jobs.shared_build_and_publish_docker_image.outputs.docker_image }}
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  shared_build_and_publish_docker_image:
+    runs-on: ubuntu-latest
+    outputs:
+      docker_image: ${{ steps.variables.outputs.docker_image }}
+    steps:
+      - name: Set variables
+        id: variables
+        shell: bash
+        run: |
+          # GITHUB_HEAD_REF is the source branch of a pull request
+          # GITHUB_REF is the name of the branch or tag that triggered the workflow
+          # i.e. for pull requests the branch name is read from GITHUB_HEAD_REF and for
+          # branch/tag updates from GITHUB_REF
+          ref="${GITHUB_HEAD_REF:-${GITHUB_REF}}"
+
+          # Strip refs/heads/ or refs/tags/ out
+          ref_name=$(basename ${ref})
+
+          docker_tag=$(echo -n "${ref_name}" | tr -C '0-9a-zA-Z._' '-')-$(date +%Y-%m-%d)-${GITHUB_SHA}
+
+          base_docker_image=${{ inputs.acr_name }}.azurecr.io/${{ inputs.docker_image_name }}
+          echo "docker_image_latest=${base_docker_image}:latest" >> ${GITHUB_OUTPUT}
+          echo "docker_image_cache=${base_docker_image}:cache" >> ${GITHUB_OUTPUT}
+          echo "docker_image=${base_docker_image}:${docker_tag}" >> ${GITHUB_OUTPUT}
+
+      - name: Set up QEMU
+        if: ${{ inputs.build_arm64_image }}
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: 'arm64'
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.azure_client_id }}
+          tenant-id: ${{ secrets.azure_tenant_id }}
+          subscription-id: ${{ secrets.azure_subscription_id }}
+
+      - name: Login to ACR via OIDC
+        run: az acr login --name ${{ inputs.acr_name }}
+
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          tags: |
+            ${{ steps.variables.outputs.docker_image }}
+            ${{ github.ref_name == 'main' && steps.variables.outputs.docker_image_latest || '' }}
+          cache-from: type=registry,ref=${{ steps.variables.outputs.docker_image_cache }}
+          cache-to: ${{ github.ref_name == 'main' && format('type=registry,ref={0},mode=max', steps.variables.outputs.docker_image_cache) || '' }}
+          push: true
+          platforms: ${{ inputs.build_arm64_image && 'linux/amd64,linux/arm64' || 'linux/amd64' }}
