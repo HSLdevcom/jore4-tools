@@ -172,9 +172,21 @@ runs:
       env:
         SA_PASSWORD: "P@ssw0rd"
       with:
+        # The IP address of MS SQL Docker container is retrieved using docker inspect because the container
+        # does not have a predefined or predictable hostname. A predefined hostname could be added in docker
+        # compose bundle.
         command:
-          'sqlcmd -S 127.0.0.1 -U sa -P "$SA_PASSWORD" -d master -Q "SELECT
-          ''OK'';"'
+          docker run
+            --rm
+            --network docker_jore4 \
+            $(docker inspect mssqltestdb | jq -r '.[0].Config.Image')
+            /opt/mssql-tools18/bin/sqlcmd
+            -C
+            -S $(docker inspect mssqltestdb | jq -r '.[0].NetworkSettings'.Networks.docker_jore4.IPAddress)
+            -U sa
+            -P "$SA_PASSWORD"
+            -d master
+            -Q "SELECT ''OK'';"
         # it takes a while for the database to start
         retries: 50
 
