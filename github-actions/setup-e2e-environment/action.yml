@@ -3,6 +3,13 @@ description:
   "Builds e2e environment with docker-compose and tests that services are
   running."
 inputs:
+  docker_compose_bundle_gha_artifact:
+    description:
+      Name of GitHub Actions artifact from which the Docker Compose bundle
+      can be found. If not set, the bundle is downloaded from jore4-docker-compose-bundle
+      Git repository's main branch.
+    required: false
+    default: null
   ui_version:
     description:
       Version of ui to use (docker image tag). Set to "" if using the default
@@ -95,9 +102,21 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Download and extract e2e docker-compose release
+    - name: Create directory for Docker Compose bundle
+      shell: bash
       run: |
         mkdir -p ${{ github.workspace }}/docker
+
+    - name: Download docker-compose bundle from GHA artifact
+      if: ${{ inputs.docker_compose_bundle_gha_artifact }}
+      uses: actions/download-artifact@v4
+      with:
+        name: jore4-docker-compose-bundle
+        path: ${{ github.workspace }}/docker
+
+    - name: Download e2e docker-compose bundle from jore4-docker-compose-bundle repository
+      if: ${{ !inputs.docker_compose_bundle_gha_artifact }}
+      run: |
         curl -s -L https://github.com/HSLdevcom/jore4-docker-compose-bundle/archive/refs/heads/main.tar.gz \
           | tar \
             -xz \

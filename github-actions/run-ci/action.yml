@@ -1,6 +1,13 @@
 name: "Run CI workflow"
 description: "Setup the e2e environment and run cypress tests in it"
 inputs:
+  docker_compose_bundle_gha_artifact:
+    description:
+      Name of GitHub Actions artifact from which the Docker Compose bundle
+      can be found. If not set, the bundle is downloaded from jore4-docker-compose-bundle
+      Git repository's main branch.
+    required: false
+    default: null
   ui_version:
     description:
       Version of ui to use (docker image tag). Set to "" if using the default
@@ -106,6 +113,7 @@ runs:
     - name: Start e2e env
       uses: HSLdevcom/jore4-tools/github-actions/setup-e2e-environment@setup-e2e-environment-v8
       with:
+        docker_compose_bundle_gha_artifact: "${{ inputs.docker_compose_bundle_gha_artifact }}"
         ui_version: "${{ inputs.ui_version }}"
         cypress_version: "${{ inputs.cypress_version }}"
         hasura_version: "${{ inputs.hasura_version }}"
