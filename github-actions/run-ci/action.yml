@@ -103,14 +103,6 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-      with:
-        submodules: recursive
-
-    - name: Extract metadata to env variables
-      uses: HSLdevcom/jore4-tools/github-actions/extract-metadata@extract-metadata-v1
-
     - name: Start e2e env
       uses: HSLdevcom/jore4-tools/github-actions/setup-e2e-environment@setup-e2e-environment-v8
       with:
