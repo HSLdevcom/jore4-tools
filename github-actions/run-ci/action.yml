@@ -111,7 +111,7 @@ runs:
   using: composite
   steps:
     - name: Start e2e env
-      uses: HSLdevcom/jore4-tools/github-actions/setup-e2e-environment@setup-e2e-environment-v8
+      uses: HSLdevcom/jore4-tools/github-actions/setup-e2e-environment@acr
       with:
         docker_compose_bundle_gha_artifact: "${{ inputs.docker_compose_bundle_gha_artifact }}"
         ui_version: "${{ inputs.ui_version }}"
