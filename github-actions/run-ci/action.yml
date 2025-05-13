@@ -111,7 +111,7 @@ runs:
   using: composite
   steps:
     - name: Start e2e env
-      uses: HSLdevcom/jore4-tools/github-actions/setup-e2e-environment@e2e-mssql-support
+      uses: HSLdevcom/jore4-tools/github-actions/setup-e2e-environment@e2e-mssql-support-dev
       with:
         docker_compose_bundle_gha_artifact: "${{ inputs.docker_compose_bundle_gha_artifact }}"
         ui_version: "${{ inputs.ui_version }}"
