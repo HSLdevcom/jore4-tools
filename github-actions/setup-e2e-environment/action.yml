@@ -186,7 +186,7 @@ runs:
             -U sa \
             -P "$SA_PASSWORD" \
             -d master \
-            -Q "SELECT ''OK'';"
+            -Q "SELECT ''OK'';" \
         # it takes a while for the database to start
         retries: 50
 
