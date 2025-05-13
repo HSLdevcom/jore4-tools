@@ -178,7 +178,7 @@ runs:
         command:
           docker run
             --rm
-            --network docker_jore4 \
+            --network docker_jore4
             $(docker inspect mssqltestdb | jq -r '.[0].Config.Image')
             /opt/mssql-tools18/bin/sqlcmd
             -C
