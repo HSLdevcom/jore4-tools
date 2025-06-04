@@ -102,6 +102,8 @@ jobs:
           tags: |
             ${{ steps.variables.outputs.docker_image }}
             ${{ github.ref_name == 'main' && steps.variables.outputs.docker_image_latest || '' }}
+          labels: |
+            git_sha=${{ github.sha }}
           cache-from: type=registry,ref=${{ steps.variables.outputs.docker_image_cache }}
           cache-to: ${{ github.ref_name == 'main' && format('type=registry,ref={0},mode=max', steps.variables.outputs.docker_image_cache) || '' }}
           push: true
