@@ -199,14 +199,14 @@ Parameters:
 Example usage:
 
 ```
-- uses: HSLdevcom/jore4-tools/github-actions/setup-e2e-environment@setup-e2e-environment-v8
+- uses: HSLdevcom/jore4-tools/github-actions/setup-e2e-environment@setup-e2e-environment-v9
   with:
     ui_version: 'docker.registry.example.org/jore4-ui:latest'
 ```
 
 ```
 steps:
-- uses: HSLdevcom/jore4-tools/github-actions/setup-e2e-environment@setup-e2e-environment-v8
+- uses: HSLdevcom/jore4-tools/github-actions/setup-e2e-environment@setup-e2e-environment-v9
   with:
     custom_docker_compose: ./docker/docker-compose.custom.yml
 ```
@@ -226,12 +226,12 @@ Example usage:
 
 ```
 steps:
-- uses: HSLdevcom/jore4-tools/github-actions/setup-e2e-environment@setup-e2e-environment-v8
+- uses: HSLdevcom/jore4-tools/github-actions/setup-e2e-environment@setup-e2e-environment-v9
 - uses: HSLdevcom/jore4-tools/github-actions/run-cypress-tests@run-cypress-tests-v1
 ```
 
 ```
-- uses: HSLdevcom/jore4-tools/github-actions/setup-e2e-environment@setup-e2e-environment-v8
+- uses: HSLdevcom/jore4-tools/github-actions/setup-e2e-environment@setup-e2e-environment-v9
   with:
     ui_version: 'docker.registry.example.org/jore4-ui:latest'
 

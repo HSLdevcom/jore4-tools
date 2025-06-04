@@ -5,6 +5,9 @@ inputs:
     description: Import endpoint of Tiamat
     required: false
     default: "localhost:3010/services/stop_places/netex"
+  seed_data_commit_sha:
+    description: The commit SHA of jore4-ui repository from which municipalities and fare zones seed data is read from
+    required: true
 
 runs:
   using: "composite"
@@ -12,7 +15,7 @@ runs:
     - name: Fetch netex import file
       shell: bash
       run: |
-        curl https://raw.githubusercontent.com/HSLdevcom/jore4-ui/main/netex/hsl-zones-netex.xml \
+        curl https://raw.githubusercontent.com/HSLdevcom/jore4-ui/${{ inputs.seed_data_commit_sha }}/netex/hsl-zones-netex.xml \
           -o hsl-zones-netex.xml
 
     - name: Verify that tiamat is up and wait if needed

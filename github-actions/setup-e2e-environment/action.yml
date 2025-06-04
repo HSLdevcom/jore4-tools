@@ -99,6 +99,11 @@ inputs:
     required: false
     default: "false"
 
+outputs:
+  e2e_source_commit_sha:
+    description: The commit SHA from which E2E tests were built from
+    value: ${{ steps.extract-metadata.outputs.e2e_source_commit_sha }}
+
 runs:
   using: "composite"
   steps:
@@ -315,3 +320,9 @@ runs:
     - name: Verify that all containers are healthy
       run: '[ -z "$(docker ps -q --filter health=unhealthy)" ]'
       shell: bash
+
+    - name: Extract metadata
+      id: extract-metadata
+      shell: bash
+      run: |
+        echo e2e_source_commit_sha=$(docker inspect cypress -f '{{ .Config.Labels.git_sha }}') >> ${GITHUB_OUTPUT}
