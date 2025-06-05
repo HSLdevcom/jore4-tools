@@ -12,7 +12,6 @@ Tools which are commonly used by other JORE4 projects
 - [Reusable GitHub Workflows](#reusable-github-workflows)
   - [shared-build-and-publish-docker-image](#shared-build-and-publish-docker-image)
 - [Github Actions](#github-actions)
-  - [extract-metadata](#extract-metadata)
   - [healthcheck](#healthcheck)
   - [setup-e2e-environment](#setup-e2e-environment)
   - [run-cypress-tests](#run-cypress-tests)
@@ -166,22 +165,6 @@ secrets:
 
 ## Github Actions
 
-### extract-metadata
-
-Extracts Github repository metadata in Docker Hub friendly format.
-
-Example usage:
-
-```
-steps:
-- uses: HSLdevcom/jore4-tools/github-actions/extract-metadata@extract-metadata-v1
-```
-
-After calling this action defines following environment variables that are available in later steps:
-`BRANCH_NAME`: branch name, e.g. `main`. Should work also in pull requests unlike `GITHUB_HEAD_REF` that Github automatically provides.
-`IMAGE_NAME`: repository name in lowercase format, including organization. E.g. `hsldevcom/jore4-tools`. Can be used as docker image name.
-`COMMIT_ID`: commit details in format `<branch name>--<git commit hash>`. Can be used when tagging docker images.
-
 ### healthcheck
 
 Runs a user-defined script to check whether a service is up and running
@@ -216,12 +199,9 @@ Parameters:
 Example usage:
 
 ```
-steps:
-- uses: HSLdevcom/jore4-tools/github-actions/extract-metadata@extract-metadata-v1
-
 - uses: HSLdevcom/jore4-tools/github-actions/setup-e2e-environment@setup-e2e-environment-v8
   with:
-    ui_version: '${{ env.IMAGE_NAME }}:${{ env.COMMIT_ID }}'
+    ui_version: 'docker.registry.example.org/jore4-ui:latest'
 ```
 
 ```
@@ -251,12 +231,9 @@ steps:
 ```
 
 ```
-steps:
-- uses: HSLdevcom/jore4-tools/github-actions/extract-metadata@extract-metadata-v1
-
 - uses: HSLdevcom/jore4-tools/github-actions/setup-e2e-environment@setup-e2e-environment-v8
   with:
-    ui_version: '${{ env.IMAGE_NAME }}:${{ env.COMMIT_ID }}'
+    ui_version: 'docker.registry.example.org/jore4-ui:latest'
 
 - uses: HSLdevcom/jore4-tools/github-actions/run-cypress-tests@run-cypress-tests-v1
   with:
