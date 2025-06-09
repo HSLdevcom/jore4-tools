@@ -1,0 +1,207 @@
+---
+name: Build and publish Docker Image
+
+on:
+  workflow_call:
+    inputs:
+      docker_compose_bundle_gha_artifact:
+        description:
+          Name of GitHub Actions artifact from which the Docker Compose bundle
+          can be found. If not set, the bundle is downloaded from jore4-docker-compose-bundle
+          Git repository's main branch.
+        type: string
+        required: false
+        default: null
+      ui_version:
+        description:
+          Version of ui to use (docker image tag). Set to "" if using the default
+          version.
+        type: string
+        required: false
+        default: ""
+      hasura_version:
+        description:
+          Version of hasura to use (docker image tag). Set to "" if using the
+          default version.
+        type: string
+        required: false
+        default: ""
+      auth_version:
+        description:
+          Version of auth to use (docker image tag). Set to "" if using the default
+          version.
+        type: string
+        required: false
+        default: ""
+      mbtiles_version:
+        description:
+          Version of mbtiles server to use (docker image tag). Set to "" if using
+          the default version.
+        type: string
+        required: false
+        default: ""
+      jore3importer_version:
+        description:
+          Version of jore3importer to use (docker image tag). Set to "" if using the
+          default version.
+        type: string
+        required: false
+        default: ""
+      testdb_version:
+        description:
+          Version of testdb to use (docker image tag). Set to "" if using the
+          default version.
+        type: string
+        required: false
+        default: ""
+      mssqltestdb_version:
+        description:
+          Version of mssqltestdb to use (docker image tag). Set to "" if using the
+          default version.
+        type: string
+        required: false
+        default: ""
+      mapmatching_version:
+        description:
+          Version of map matching service to use (docker image tag). Set to "" if
+          using the default version.
+        type: string
+        required: false
+        default: ""
+      mapmatchingdb_version:
+        description:
+          Version of map matching database to use (docker image tag). Set to "" if
+          using the default version.
+        type: string
+        required: false
+        default: ""
+      cypress_version:
+        description:
+          Version of cypress tests to use (docker image tag). Set to "" if using the
+          default version.
+        type: string
+        required: false
+        default: ""
+      hastus_version:
+        description:
+          Version of hastus importer to use (docker image tag). Set to "" if using
+          the default version.
+        type: string
+        required: false
+        default: ""
+      timetablesapi_version:
+        description:
+          Version of timetables api to use (docker image tag). Set to "" if using
+          the default version.
+        type: string
+        required: false
+        default: ""
+      tiamat_version:
+        description: Version of tiamat to use (docker image tag). Set to "" if using
+          the default version.
+        type: string
+        required: false
+        default: ""
+      custom_docker_compose:
+        description:
+          Path for an additional docker-compose file to be used when starting up the
+          environment. Can be used to e.g. run tests with the repository's own
+          docker-compose.custom.yml setup
+        type: string
+        required: false
+        default: ""
+      start_jore3_importer:
+        description: Should Jore3 importer be started along the rest of the e2e environment.
+        type: string
+        required: false
+        default: "false"
+      test-tags:
+        description:
+          Specify a string of tags for tests to be run in format '@smoke'. To
+          specify multiple tags, use format '@routes @smoke'. To run all tests, set
+          it to ''.
+        type: string
+        required: false
+        default: "@smoke"
+      video:
+        description:
+          Turn video on or off. Supported values are 'true' and 'false'.
+        type: string
+        required: false
+        default: 'false'
+
+jobs:
+  run_e2e_tests:
+    name: Run e2e tests
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        containers: [1, 2, 3, 4]
+    steps:
+      - name: Start e2e env
+        id: start-e2e-env
+        uses: HSLdevcom/jore4-tools/github-actions/setup-e2e-environment@setup-e2e-environment-v9
+        with:
+          docker_compose_bundle_gha_artifact: "${{ inputs.docker_compose_bundle_gha_artifact }}"
+          ui_version: "${{ inputs.ui_version }}"
+          cypress_version: "${{ inputs.cypress_version }}"
+          hasura_version: "${{ inputs.hasura_version }}"
+          auth_version: "${{ inputs.auth_version }}"
+          mbtiles_version: "${{ inputs.mbtiles_version }}"
+          jore3importer_version: "${{ inputs.jore3importer_version }}"
+          testdb_version: "${{ inputs.testdb_version }}"
+          mssqltestdb_version: "${{ inputs.mssqltestdb_version }}"
+          mapmatching_version: "${{ inputs.mapmatching_version }}"
+          mapmatchingdb_version: "${{ inputs.mapmatchingdb_version }}"
+         hastus_version: "${{ inputs.hastus_version }}"
+          timetablesapi_version: "${{ inputs.timetablesapi_version }}"
+          tiamat_version: "${{ inputs.tiamat_version }}"
+          custom_docker_compose: "${{ inputs.custom_docker_compose }}"
+          start_jore3_importer: "${{ inputs.start_jore3_importer }}"
+
+      - name: Seed infrastructure links
+        uses: HSLdevcom/jore4-tools/github-actions/seed-infrastructure-links@seed-infrastructure-links-v3
+        with:
+          seed_data_commit_sha: "${{ steps.start-e2e-env.outputs.e2e_source_commit_sha }}"
+
+      - name: Seed municipalities and fare zones
+        uses: HSLdevcom/jore4-tools/github-actions/seed-municipalities-and-fare-zones@seed-municipalities-and-fare-zones-v2
+        with:
+          seed_data_commit_sha: "${{ steps.start-e2e-env.outputs.e2e_source_commit_sha }}"
+
+      - name: Run the tests
+        shell: bash
+        run: |
+          docker exec \
+            -e TEST_TAGS="${{ inputs.test-tags }}" \
+            -e TEST_VIDEO="${{ inputs.video }}" \
+            -e SPLIT="${{ strategy.job-total }}" \
+            -e SPLIT_INDEX="${{ strategy.job-index }}" \
+            cypress /e2e/cypress/run_cypress_in_4K_xvfb.sh
+
+      - name: Copy test reports from Cypress container
+        id: copy_test_reports
+        # Should be run especially when tests fail
+        if: always()
+        shell: bash
+        run: |
+          docker cp cypress:/e2e/cypress/reports ${{ github.workspace }}/test-reports || true
+
+          if [[ -d test-reports ]]
+          then
+            # List files in test-reports directory
+            find test-reports -type f
+            test_reports_exist=true
+          else
+            test_reports_exist=false
+          fi
+
+          echo "test_reports_exist=${test_reports_exist}" >> $GITHUB_OUTPUT
+
+      - name: Upload test reports as an artifact
+        if: always() && steps.copy_test_reports.outputs.test_reports_exist == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-docker-reports-${{ strategy.job-index }}
+          path: ${{ github.workspace }}/test-reports
