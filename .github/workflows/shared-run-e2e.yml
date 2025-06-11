@@ -176,9 +176,26 @@ jobs:
           docker exec \
             -e TEST_TAGS="${{ inputs.test-tags }}" \
             -e TEST_VIDEO="${{ inputs.video }}" \
+            -e JORE4_CYPRESS_GENERATE_CTRF_REPORT=true \
             -e SPLIT="${{ strategy.job-total }}" \
             -e SPLIT_INDEX="${{ strategy.job-index }}" \
             cypress /e2e/cypress/run_cypress_in_4K_xvfb.sh
+
+      - name: Copy test results
+        id: copy_test_results
+        # Should be run especially when tests fail
+        if: always()
+        shell: bash
+        run: |
+          docker cp cypress:/e2e/cypress/ctrf/ctrf-report.json ${{ github.workspace }}/ctrf-report.json
+
+      - name: Upload test reports as an artifact
+        # Should be run especially when tests fail
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-test-results-${{ strategy.job-index }}
+          path: ${{ github.workspace }}/ctrf-report.json
 
       - name: Copy test reports from Cypress container
         id: copy_test_reports
@@ -205,3 +222,26 @@ jobs:
         with:
           name: cypress-docker-reports-${{ strategy.job-index }}
           path: ${{ github.workspace }}/test-reports
+
+  publish_e2e_test_results:
+    name: Publish E2E Test Results
+    runs-on: ubuntu-24.04
+    needs:
+      - run_e2e_tests
+    steps:
+      - name: Download E2E Test Results
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: cypress-test-results-*
+          path: ${{ github.workspace }}/ctrf
+
+      - name: Publish Test Report
+        uses: ctrf-io/github-test-reporter@27b97adba93f02142c573c8a710045cac0d874ae # v1.0.14
+        with:
+          report-path: 'ctrf/*/*.json'
+          summary-report: true
+          failed-report: true
+          flaky-report: true
+          skipped-report: true
+          test-report: false
