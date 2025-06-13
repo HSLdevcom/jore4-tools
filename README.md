@@ -11,6 +11,7 @@ Tools which are commonly used by other JORE4 projects
   - [download-docker-bundle.sh](#download-docker-bundlesh)
 - [Reusable GitHub Workflows](#reusable-github-workflows)
   - [shared-build-and-publish-docker-image](#shared-build-and-publish-docker-image)
+  - [shared-run-e2e](#shared-run-e2e)
 - [Github Actions](#github-actions)
   - [healthcheck](#healthcheck)
   - [setup-e2e-environment](#setup-e2e-environment)
@@ -193,6 +194,13 @@ Arguments:
 - `start_jore3_importer`: (optional) Is Jore3 importer be started
 - `test-tags`: (optional) String of tags for tests to be run in format '@smoke'
 - `video`: (optional) Enable/disable video. `false` by default
+- `update_e2e_test_durations`: (optional) Record E2E test durations into jore4-ci-data repository. If set to `true`
+  a SSH deploy key having write permissions to the repository must be provided with `jore4-ci-data-repo-ssh-key` parameter
+
+Secrets:
+
+- `jore4_ci_data_repo_ssh_key`: (optional) SSH deploy key for write access to jore4-ci-data repository. Only needed
+  when `update_e2e_test_durations` argument is set to `true`.
 
 Example usage:
 
