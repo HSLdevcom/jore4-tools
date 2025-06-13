@@ -129,6 +129,20 @@ on:
         type: string
         required: false
         default: 'false'
+      update_e2e_test_durations:
+        description: |
+          Should the E2E test durations be updated to jore4-ci-data repository's e2e-test-durations branch
+          based on the run.
+
+          When set to true, jore4_ci_data_repo_ssh_key must also be set.
+        required: false
+        type: boolean
+        default: false
+    secrets:
+      jore4_ci_data_repo_ssh_key:
+        description:
+          SSH key that can be used to write to HSLdevcom/jore4-ci-data repository.
+        required: false
 
 jobs:
   run_e2e_tests:
@@ -170,6 +184,32 @@ jobs:
         with:
           seed_data_commit_sha: "${{ steps.start-e2e-env.outputs.e2e_source_commit_sha }}"
 
+      - name: Download E2E Test Durations
+        # The cypress-split plugin currently (2025-06) includes all the timings from the input durations file and calculates
+        # the new duration as (new_duration + (N - 1) * old_duration) / N and also includes also the spects that are no
+        # longer present.
+        # Therefore to only include existing spects and use the actual test duration, the durations are not given as input
+        # for cypress-split when durations are going to be updated
+        #
+        # The following describe where you can find the implementation details so you can check if the details have changed
+        #
+        # You can find the cypress-split-merge from https://github.com/bahmutov/cypress-split/blob/0ba18be998f9d21eee27c1d78a06c33bc60a6d05/bin/merge.js
+        # which is calling mergeSplitTimings function (https://github.com/bahmutov/cypress-split/blob/0ba18be998f9d21eee27c1d78a06c33bc60a6d05/src/timings.js#L111)
+        # to merge durations.
+        #
+        # The implementation keeping all durations from the input duration files can be found from
+        # https://github.com/bahmutov/cypress-split/blob/0ba18be998f9d21eee27c1d78a06c33bc60a6d05/src/index.js#L213
+        if: ${{ ! inputs.update_e2e_test_durations }}
+        shell: bash
+        run: |
+          curl \
+            -O \
+            https://raw.githubusercontent.com/HSLdevcom/jore4-ci-data/e2e-test-durations/e2e-test-durations.json \
+
+          cat e2e-test-durations.json
+
+          docker cp e2e-test-durations.json cypress:/e2e/cypress/e2e-test-durations.json
+
       - name: Run the tests
         shell: bash
         run: |
@@ -179,7 +219,22 @@ jobs:
             -e JORE4_CYPRESS_GENERATE_CTRF_REPORT=true \
             -e SPLIT="${{ strategy.job-total }}" \
             -e SPLIT_INDEX="${{ strategy.job-index }}" \
+            -e SPLIT_FILE=/e2e/cypress/e2e-test-durations.json \
+            -e SPLIT_OUTPUT_FILE=/e2e/cypress/e2e-test-durations.out.json \
             cypress /e2e/cypress/run_cypress_in_4K_xvfb.sh
+
+      - name: Copy test durations from Docker container
+        shell: bash
+        run: |
+          docker cp cypress:/e2e/cypress/e2e-test-durations.out.json ${{ github.workspace }}/durations.out.json
+
+          cat ${{ github.workspace }}/durations.out.json
+
+      - name: Upload test durations
+        uses: actions/upload-artifact@v4
+        with:
+          name: "e2e-test-durations-${{ strategy.job-index }}"
+          path: ${{ github.workspace }}/durations.out.json
 
       - name: Copy test results
         id: copy_test_results
@@ -245,3 +300,71 @@ jobs:
           flaky-report: true
           skipped-report: true
           test-report: false
+
+  update_e2e_test_durations:
+    name: Update E2E Test Durations
+    runs-on: ubuntu-24.04
+    if: ${{ inputs.update_e2e_test_durations }}
+    needs:
+      - run_e2e_tests
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          repository: 'HSLdevcom/jore4-ci-data'
+          ref: e2e-test-durations
+          ssh-key: ${{ secrets.jore4_ci_data_repo_ssh_key }}
+
+      - name: Download E2E Test Durations
+        uses: actions/download-artifact@v4
+        with:
+          pattern: e2e-test-durations-*
+          path: ${{ github.workspace }}/split-durations
+
+      - name: Merge duration files
+        shell: bash
+        run: |
+          docker run \
+            -i \
+            --rm \
+            -v $(pwd):$(pwd) \
+            -w /tmp \
+            node:24-alpine \
+            sh <<EOF
+          npm install cypress-split
+          ./node_modules/.bin/cypress-split-merge --parent-folder $(pwd) --split-file durations.out.json --output $(pwd)/e2e-test-durations.json
+          EOF
+
+      - name: Check if timings have updates
+        shell: bash
+        run: |
+          if test -z "$(git status --porcelain)"
+          then
+            status=no-changes
+          else
+            status=changes
+            git diff
+          fi
+
+          echo "Git work tree status: ${status}"
+          echo GIT_WORK_TREE_STATUS=${status} >> ${GITHUB_ENV}
+
+      - name: Release updated files
+        if: ${{ env.GIT_WORK_TREE_STATUS == 'changes' }}
+        env:
+          GIT_AUTHOR_NAME: Jore4 E2E Tests
+          GIT_AUTHOR_EMAIL: noreply@vincit.fi
+          GIT_COMMITTER_NAME: Jore4 E2E Tests
+          GIT_COMMITTER_EMAIL: noreply@vincit.fi
+        shell: bash
+        run: |
+          git add e2e-test-durations.json
+
+          git commit -m "Update E2E Test Timings
+
+          The source of E2E test durations is GHA Workflow run
+          ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}
+          "
+
+          git push origin HEAD:refs/heads/e2e-test-durations
