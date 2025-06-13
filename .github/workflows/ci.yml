@@ -2,6 +2,7 @@ name: CI
 
 on:
   pull_request:
+  push:
 
 jobs:
   run_e2e_tests_workflow:
@@ -9,3 +10,7 @@ jobs:
     uses: ./.github/workflows/shared-run-e2e.yml
     with:
       test-tags: ''
+      update-e2e-test-durations: true
+      cypress_version: crjore4prod001.azurecr.io/jore4-cypress:cypress-composite-event-handler-2025-06-13-a773a5abdd4a387279402941f56a7bfa892d7bb9
+    secrets:
+      jore4-ci-data-repo-ssh-key: ${{ secrets.JORE4_CI_DATA_REPO_DEPLOY_KEY }}
