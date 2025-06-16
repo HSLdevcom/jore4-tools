@@ -15,7 +15,6 @@ Tools which are commonly used by other JORE4 projects
 - [Github Actions](#github-actions)
   - [healthcheck](#healthcheck)
   - [setup-e2e-environment](#setup-e2e-environment)
-  - [run-cypress-tests](#run-cypress-tests)
 - [Github scripts](#github-scripts)
   - [add_secrets.py](#add_secretspy)
 - [Renovatebot preset](#renovatebot-preset)
@@ -258,35 +257,6 @@ steps:
 - uses: HSLdevcom/jore4-tools/github-actions/setup-e2e-environment@setup-e2e-environment-v9
   with:
     custom_docker_compose: ./docker/docker-compose.custom.yml
-```
-
-### run-cypress-tests
-
-Runs cypress e2e tests. It assumes that a container with the name `cypress` is already running and
-is parameterized to access all the tested containers. Best combine with the `setup-e2e-environment`
-action as the docker bundle already contains the latest version of the cypress tests.
-
-To see how docker-compose bundle is created and used, refer to [wiki](https://github.com/HSLdevcom/jore4/wiki/Infra#docker-compose-bundle)
-
-Parameters:
-- test-tags: Specify which e2e tests to run. `""` to run all, `"@smoke @routes"` to run with given tags. Default: `"@smoke"`
-
-Example usage:
-
-```
-steps:
-- uses: HSLdevcom/jore4-tools/github-actions/setup-e2e-environment@setup-e2e-environment-v9
-- uses: HSLdevcom/jore4-tools/github-actions/run-cypress-tests@run-cypress-tests-v1
-```
-
-```
-- uses: HSLdevcom/jore4-tools/github-actions/setup-e2e-environment@setup-e2e-environment-v9
-  with:
-    ui_version: 'docker.registry.example.org/jore4-ui:latest'
-
-- uses: HSLdevcom/jore4-tools/github-actions/run-cypress-tests@run-cypress-tests-v1
-  with:
-    test-tags: ""
 ```
 
 ## Github scripts
