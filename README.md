@@ -163,6 +163,47 @@ secrets:
   azure_subscription_id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 ```
 
+### shared-run-e2e
+
+Runs E2E tests.
+
+It assumes that a container with the name `cypress` is already running and
+is parameterized to access all the tested containers. Best combine with the `setup-e2e-environment`
+action as the docker bundle already contains the latest version of the cypress tests.
+
+To see how docker-compose bundle is created and used, refer to [wiki](https://github.com/HSLdevcom/jore4/wiki/Infra#docker-compose-bundle)
+
+Arguments:
+- `docker_compose_bundle_gha_artifact` (optional): The name of GitHub Actions artifact containing Docker Compose bundle.
+  If not set, the bundle from main branch of jore4-docker-compose-bundle repository is used.
+- `ui_version`: UI Docker image
+- `hasura_version`: Hasura Docker image
+- `auth_version`: Auth Docker image
+- `mbtiles_version`: MB Tiles Docker image
+- `jore3importer_version`: Jore3 Importer Docker image
+- `testdb_version`: Docker Test DB image
+- `mssqltestdb_version`: MSSQL Docker image
+- `mapmatching_version`: Map Matching Docker image
+- `mapmatchingdb_version`: Map Matching DB Docker image
+- `cypress_version`: Cypress Docker image
+- `hastus_version`: Hastus Docker image
+- `timetablesapi_version`: Timetables API Docker image
+- `tiamat_version`: Tiamat Docker image
+- `custom_docker_compose`: Path to additional docker compose file used when starting E2E environment
+- `start_jore3_importer`: (optional) Is Jore3 importer be started
+- `test-tags`: (optional) String of tags for tests to be run in format '@smoke'
+- `video`: (optional) Enable/disable video. `false` by default
+
+Example usage:
+
+```
+run-e2e-tests:
+  name: Run E2E tests
+  uses: HSLdevcom/jore4-tools/.github/workflows/shared-run-e2e.yml@main
+  with:
+    test-tags: ""
+```
+
 ## Github Actions
 
 ### healthcheck
