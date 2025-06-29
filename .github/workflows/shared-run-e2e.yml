@@ -292,7 +292,7 @@ jobs:
           path: ${{ github.workspace }}/ctrf
 
       - name: Publish Test Report
-        uses: ctrf-io/github-test-reporter@27b97adba93f02142c573c8a710045cac0d874ae # v1.0.14
+        uses: ctrf-io/github-test-reporter@e67da0557d332ad40c7fa1bc59a530106e7d639b # v1.0.15
         with:
           report-path: 'ctrf/*/*.json'
           summary-report: true
