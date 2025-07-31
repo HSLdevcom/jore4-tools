@@ -64,7 +64,7 @@
       // this includes everything, even @digest of "1.2.3" pinned version updates
       groupName: "all dependencies",
       groupSlug: "all",
-      matchPackagePatterns: ["*"],
+      matchPackageNames: ["*"],
     },
     {
       // we want to group typescript updates to its own PR
@@ -83,7 +83,6 @@
       groupName: "spring boot",
       groupSlug: "spring-boot",
       matchPackageNames: ["org.springframework.boot"],
-      matchPackagePrefixes: ["org.springframework.boot:"],
     },
     {
       // group Dockerfile and docker-compose version updates to own PR
