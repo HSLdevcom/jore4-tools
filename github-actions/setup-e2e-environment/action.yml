@@ -196,10 +196,10 @@ runs:
         retries: 50
 
       # on some rare occasions unfortunately this is failing...
-    - name: Debug on failure
-      if: ${{ failure() }}
+    - name: Show MSSQL logs
+      if: ${{ failure() && steps.verify_mssql_started.outcome == 'failure' }}
       run: |
-        docker logs mssqltestdb || echo "no mssql container"
+        docker logs mssqltestdb
       shell: bash
 
     - name: Verify that hasura is up and running standalone
