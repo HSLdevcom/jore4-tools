@@ -165,13 +165,21 @@ runs:
         command: "curl --fail http://localhost:3300 --output /dev/null --silent"
 
     - name: Verify that postgresql is up and running
+      id: verify_postgresql_started
       uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
       with:
         command: "pg_isready -h localhost -p 6432"
         # it takes a while for the database to start
         retries: 50
 
+    - name: Show PostgreSQL logs
+      if: ${{ failure() && steps.verify_postgresql_started.outcome == 'failure' }}
+      run: |
+        docker logs testdb
+      shell: bash
+
     - name: Verify that mssql testdb is up and running
+      id: verify_mssql_started
       if: ${{ inputs.start_jore3_importer == 'true' }}
       uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
       env:
