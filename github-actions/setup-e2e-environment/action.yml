@@ -130,22 +130,26 @@ runs:
             --wildcards 'jore4-docker-compose-bundle-main/docker-compose/*'
       shell: bash
 
+    - name: Set environment variables for Docker Compose bundle
+      shell: bash
+      run: |
+        cat >>${GITHUB_ENV} <<EOF
+        UI_DOCKER_IMAGE=${{ inputs.ui_version }}
+        HASURA_DOCKER_IMAGE=${{ inputs.hasura_version }}
+        AUTH_DOCKER_IMAGE=${{ inputs.auth_version }}
+        MBTILES_DOCKER_IMAGE=${{ inputs.mbtiles_version }}
+        JORE3IMPORTER_DOCKER_IMAGE=${{ inputs.jore3importer_version }}
+        TESTDB_DOCKER_IMAGE=${{ inputs.testdb_version }}
+        MSSQLTESTDB_DOCKER_IMAGE=${{ inputs.mssqltestdb_version }}
+        MAPMATCHING_DOCKER_IMAGE=${{ inputs.mapmatching_version }}
+        MAPMATCHINGDB_DOCKER_IMAGE=${{ inputs.mapmatchingdb_version }}
+        CYPRESS_DOCKER_IMAGE=${{ inputs.cypress_version }}
+        HASTUS_DOCKER_IMAGE=${{ inputs.hastus_version }}
+        TIMETABLESAPI_DOCKER_IMAGE=${{ inputs.timetablesapi_version }}
+        TIAMAT_DOCKER_IMAGE=${{ inputs.tiamat_version }}
+        EOF
+
     - name: Start e2e environment
-      # use environment variables within the docker-compose bundle to override some images
-      env:
-        UI_DOCKER_IMAGE: ${{ inputs.ui_version }}
-        HASURA_DOCKER_IMAGE: ${{ inputs.hasura_version }}
-        AUTH_DOCKER_IMAGE: ${{ inputs.auth_version }}
-        MBTILES_DOCKER_IMAGE: ${{ inputs.mbtiles_version }}
-        JORE3IMPORTER_DOCKER_IMAGE: ${{ inputs.jore3importer_version }}
-        TESTDB_DOCKER_IMAGE: ${{ inputs.testdb_version }}
-        MSSQLTESTDB_DOCKER_IMAGE: ${{ inputs.mssqltestdb_version }}
-        MAPMATCHING_DOCKER_IMAGE: ${{ inputs.mapmatching_version }}
-        MAPMATCHINGDB_DOCKER_IMAGE: ${{ inputs.mapmatchingdb_version }}
-        CYPRESS_DOCKER_IMAGE: ${{ inputs.cypress_version }}
-        HASTUS_DOCKER_IMAGE: ${{ inputs.hastus_version }}
-        TIMETABLESAPI_DOCKER_IMAGE: ${{ inputs.timetablesapi_version }}
-        TIAMAT_DOCKER_IMAGE: ${{ inputs.tiamat_version }}
       run: |
         docker compose \
           -f ${{ github.workspace }}/docker/docker-compose.yml \
