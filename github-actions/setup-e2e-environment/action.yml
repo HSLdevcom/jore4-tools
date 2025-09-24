@@ -266,6 +266,19 @@ runs:
           "curl --fail http://localhost:3300/api/auth/actuator/health --output
           /dev/null --silent"
 
+    - name: Verify that jore3 importer is up and running standalone
+      if: ${{ inputs.start_jore3_importer == 'true' }}
+      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+      with:
+        command:
+          "curl --fail http://localhost:3004/actuator/health --output /dev/null
+          --silent"
+
+    - name: Verify that cypress test container is up and running standalone
+      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+      with:
+        command: "docker exec cypress yarn cypress --version"
+
     - name: Verify that mbtiles server is up and running standalone
       uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
       with:
@@ -278,38 +291,6 @@ runs:
         command:
           "curl --fail http://localhost:3300/api/mbtiles/services --output
           /dev/null --silent"
-
-    - name: Verify that jore3 importer is up and running standalone
-      if: ${{ inputs.start_jore3_importer == 'true' }}
-      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
-      with:
-        command:
-          "curl --fail http://localhost:3004/actuator/health --output /dev/null
-          --silent"
-
-    - name: Verify that map matching database is up and running standalone
-      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
-      with:
-        command: "pg_isready -h localhost -p 6433"
-
-    - name: Verify that map matching server is up and running standalone
-      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
-      with:
-        command:
-          "curl --fail http://localhost:3005/actuator/health --output /dev/null
-          --silent"
-
-    - name: Verify that map matching server is up and running through proxy
-      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
-      with:
-        command:
-          "curl --fail http://localhost:3300/api/mapmatching/actuator/health
-          --output /dev/null --silent"
-
-    - name: Verify that cypress test container is up and running standalone
-      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
-      with:
-        command: "docker exec cypress yarn cypress --version"
 
     - name: Verify that hastus importer is up and running standalone
       uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
@@ -330,6 +311,25 @@ runs:
       with:
         command: "curl --fail http://localhost:3009/actuator/health --output
           /dev/null --silent"
+
+    - name: Verify that map matching database is up and running standalone
+      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+      with:
+        command: "pg_isready -h localhost -p 6433"
+
+    - name: Verify that map matching server is up and running standalone
+      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+      with:
+        command:
+          "curl --fail http://localhost:3005/actuator/health --output /dev/null
+          --silent"
+
+    - name: Verify that map matching server is up and running through proxy
+      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+      with:
+        command:
+          "curl --fail http://localhost:3300/api/mapmatching/actuator/health
+          --output /dev/null --silent"
 
     - name: Verify that tiamat is up and running standalone
       uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
