@@ -149,7 +149,23 @@ runs:
         TIAMAT_DOCKER_IMAGE=${{ inputs.tiamat_version }}
         EOF
 
-    - name: Start e2e environment
+    # The services that take a long while to start are started first so they can start in the background while
+    # Docker images for the rest of the services are being downloaded
+    - name: Start e2e environment (pre)
+      run: |
+        docker compose \
+          -f ${{ github.workspace }}/docker/docker-compose.yml \
+          ${{ inputs.custom_docker_compose != '' && format('-f {0}', inputs.custom_docker_compose) || '' }} \
+          ${{ inputs.start_jore3_importer == 'true' && '--profile importer' || '' }} \
+          up -d \
+          jore4-testdb \
+          jore4-hasura \
+          jore4-tiamat \
+          jore4-auth \
+
+      shell: bash
+
+    - name: Start e2e environment (all remaining)
       run: |
         docker compose \
           -f ${{ github.workspace }}/docker/docker-compose.yml \
