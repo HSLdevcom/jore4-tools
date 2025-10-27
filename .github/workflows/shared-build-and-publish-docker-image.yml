@@ -35,6 +35,16 @@ on:
         type: string
         required: false
         default: null
+      artifact-id:
+        description: Artifact ID needed to download for the build.
+        type: string
+        required: false
+        default: null
+      artifact-path:
+        description: Target where to download the artifact.
+        type: string
+        required: false
+        default: .
     secrets:
       azure_tenant_id:
         required: true
@@ -95,6 +105,13 @@ jobs:
 
       - name: Login to ACR via OIDC
         run: az acr login --name ${{ inputs.acr_name }}
+
+      - name: Download artifacts
+        if: ${{ inputs.artifact_id }}
+        uses: actions/download-artifact@v5
+        with:
+          artifact-ids: ${{ inputs.artifact_id }}
+          path: ${{ inputs.artifact-path }}
 
       - name: Build and push
         uses: docker/build-push-action@v6
