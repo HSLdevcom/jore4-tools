@@ -107,10 +107,10 @@ jobs:
         run: az acr login --name ${{ inputs.acr_name }}
 
       - name: Download artifacts
-        if: ${{ inputs.artifact_id }}
+        if: ${{ inputs.artifact-id }}
         uses: actions/download-artifact@v5
         with:
-          artifact-ids: ${{ inputs.artifact_id }}
+          artifact-ids: ${{ inputs.artifact-id }}
           path: ${{ inputs.artifact-path }}
 
       - name: Build and push
