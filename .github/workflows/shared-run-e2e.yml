@@ -231,7 +231,7 @@ jobs:
           cat ${{ github.workspace }}/durations.out.json
 
       - name: Upload test durations
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: "e2e-test-durations-${{ strategy.job-index }}"
           path: ${{ github.workspace }}/durations.out.json
@@ -247,7 +247,7 @@ jobs:
       - name: Upload test reports as an artifact
         # Should be run especially when tests fail
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: cypress-test-results-${{ strategy.job-index }}
           path: ${{ github.workspace }}/ctrf-report.json
@@ -273,7 +273,7 @@ jobs:
 
       - name: Upload test reports as an artifact
         if: always() && steps.copy_test_reports.outputs.test_reports_exist == 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: cypress-docker-reports-${{ strategy.job-index }}
           path: ${{ github.workspace }}/test-reports
@@ -285,14 +285,14 @@ jobs:
       - run_e2e_tests
     steps:
       - name: Download E2E Test Results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         continue-on-error: true
         with:
           pattern: cypress-test-results-*
           path: ${{ github.workspace }}/ctrf
 
       - name: Publish Test Report
-        uses: ctrf-io/github-test-reporter@27b97adba93f02142c573c8a710045cac0d874ae # v1.0.14
+        uses: ctrf-io/github-test-reporter@024bc4b64d997ca9da86833c6b9548c55c620e40 # v1.0.26
         with:
           report-path: 'ctrf/*/*.json'
           summary-report: true
@@ -309,7 +309,7 @@ jobs:
       - run_e2e_tests
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           repository: 'HSLdevcom/jore4-ci-data'
@@ -317,7 +317,7 @@ jobs:
           ssh-key: ${{ secrets.jore4_ci_data_repo_ssh_key }}
 
       - name: Download E2E Test Durations
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           pattern: e2e-test-durations-*
           path: ${{ github.workspace }}/split-durations
