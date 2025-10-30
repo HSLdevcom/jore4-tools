@@ -106,6 +106,12 @@ jobs:
       - name: Login to ACR via OIDC
         run: az acr login --name ${{ inputs.acr_name }}
 
+      - name: Checkout
+        # Checkout is needed when context is local "."
+        # Otherwise the repository code will not be fetched for the build
+        if: ${{ inputs.context == '.' }}
+        uses: actions/checkout@v5
+
       - name: Download artifacts
         if: ${{ inputs.artifact-id }}
         uses: actions/download-artifact@v5
