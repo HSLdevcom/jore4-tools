@@ -294,10 +294,11 @@ onboarding flow ends.
 
 Example:
 ```
-- name: Validate
-  uses: suzuki-shunsuke/github-action-renovate-config-validator@v0.1.3
-  with:
-    config_file_path: .github/renovate.json5
+jobs:
+  validate:
+    uses: HSLdevcom/jore4-tools/.github/workflows/shared-check-renovatebot-config.yml@shared-check-renovatebot-config-v1
+    with:
+      config_file_path: renovatebot/jore4-default-preset.json5
 ```
 
 To see a bit more in detail how the renovatebot rules work, check the comments within the

@@ -1,0 +1,29 @@
+name: Shared check renovatebot config
+
+on:
+  workflow_call:
+    inputs:
+      config_file_path:
+        description: Path to the Renovatebot config file to validate
+        type: string
+        required: true
+      checkout_submodules:
+        description: Whether to checkout submodules
+        type: string
+        required: false
+        default: "false"
+
+jobs:
+  validate:
+    name: Validate renovatebot config
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          submodules: ${{ inputs.checkout_submodules }}
+
+      - name: Validate config
+        uses: suzuki-shunsuke/github-action-renovate-config-validator@c22827f47f4f4a5364bdba19e1fe36907ef1318e # v1.1.1
+        with:
+          config_file_path: ${{ inputs.config_file_path }}
