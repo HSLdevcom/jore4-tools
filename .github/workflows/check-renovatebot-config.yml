@@ -11,10 +11,7 @@ jobs:
     name: Validate renovatebot config
     runs-on: ubuntu-24.04
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Validate
-        uses: suzuki-shunsuke/github-action-renovate-config-validator@v0.1.3
+      - name: Validate Renovatebot config
+        uses: HSLdevcom/jore4-tools/github-actions/check-renovatebot-config@shared-check-renovatebot-config-v1
         with:
           config_file_path: renovatebot/jore4-default-preset.json5

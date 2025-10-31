@@ -1,0 +1,17 @@
+name: Check renovatebot config
+description: Validates a Renovatebot config file using suzuki-shunsuke/github-action-renovate-config-validator.
+inputs:
+  config_file_path:
+    description: Path to the Renovatebot config file to validate
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v5
+
+    - name: Validate
+      uses: suzuki-shunsuke/github-action-renovate-config-validator@c22827f47f4f4a5364bdba19e1fe36907ef1318e # v1.1.1
+      with:
+        config_file_path: ${{ inputs.config_file_path }}
