@@ -23,6 +23,11 @@ jobs:
         with:
           submodules: ${{ inputs.checkout_submodules }}
 
+      - name: Setup latest lts Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+
       - name: Validate config
         uses: suzuki-shunsuke/github-action-renovate-config-validator@c22827f47f4f4a5364bdba19e1fe36907ef1318e # v1.1.1
         with:
