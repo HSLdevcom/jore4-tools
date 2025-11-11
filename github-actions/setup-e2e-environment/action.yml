@@ -186,7 +186,7 @@ runs:
     - name: Verify that UI is up and running through proxy
       uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
       with:
-        command: "curl --fail http://localhost:3300 --output /dev/null --silent"
+        command: "curl --fail https://localhost:3301 --output /dev/null --silent --insecure"
 
     - name: Verify that postgresql is up and running
       id: verify_postgresql_started
@@ -242,8 +242,9 @@ runs:
     - name: Verify that hasura is up and running through proxy
       uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
       with:
-        command: "curl --fail http://localhost:3300/api/graphql/healthz --output
-          /dev/null --silent"
+        command:
+          "curl --fail https://localhost:3301/api/graphql/healthz --output
+          /dev/null --silent --insecure"
 
     - name: Verify that auth backend is up and running standalone
       uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
@@ -263,8 +264,8 @@ runs:
       uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
       with:
         command:
-          "curl --fail http://localhost:3300/api/auth/actuator/health --output
-          /dev/null --silent"
+          "curl --fail https://localhost:3301/api/auth/actuator/health --output
+          /dev/null --silent --insecure"
 
     - name: Verify that jore3 importer is up and running standalone
       if: ${{ inputs.start_jore3_importer == 'true' }}
@@ -289,8 +290,8 @@ runs:
       uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
       with:
         command:
-          "curl --fail http://localhost:3300/api/mbtiles/services --output
-          /dev/null --silent"
+          "curl --fail https://localhost:3301/api/mbtiles/services --output
+          /dev/null --silent --insecure"
 
     - name: Verify that hastus importer is up and running standalone
       uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
@@ -303,8 +304,8 @@ runs:
       uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
       with:
         command:
-          "curl --fail http://localhost:3300/api/hastus/actuator/health --output
-          /dev/null --silent"
+          "curl --fail https://localhost:3301/api/hastus/actuator/health --output
+          /dev/null --silent --insecure"
 
     - name: Verify that timetables-api is up and running standalone
       uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
@@ -328,8 +329,8 @@ runs:
       uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
       with:
         command:
-          "curl --fail http://localhost:3300/api/mapmatching/actuator/health
-          --output /dev/null --silent"
+          "curl --fail https://localhost:3301/api/mapmatching/actuator/health
+          --output /dev/null --silent --insecure"
 
     - name: Verify that tiamat is up and running standalone
       uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
