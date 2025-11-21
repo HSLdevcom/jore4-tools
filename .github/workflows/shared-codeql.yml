@@ -1,0 +1,39 @@
+name: Shared CodeQL analysis
+
+on:
+  workflow_call:
+    inputs:
+      languages:
+        description: 'Languages to analyze (JSON array, e.g., ["actions", "javascript", "typescript", "java"])'
+        required: true
+        type: string
+
+jobs:
+  analyze:
+    name: Analyze code
+    runs-on: ubuntu-24.04
+    permissions:
+      # required for all workflows
+      security-events: write
+      # required to fetch internal or private CodeQL packs
+      packages: read
+      # repository contents
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ${{ fromJSON(inputs.languages) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: none # Default, maybe change this later
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:${{matrix.language}}"

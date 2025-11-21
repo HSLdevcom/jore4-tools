@@ -1,0 +1,17 @@
+name: CodeQL analysis
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  schedule:
+    - cron: "0 8 * * *" # every day at 8 AM UTC
+
+jobs:
+  validate:
+    uses: HSLdevcom/jore4-tools/.github/workflows/shared-codeql.yml@shared-ghas-workflows-v1
+    with:
+      languages: '["actions"]'
