@@ -1,0 +1,43 @@
+name: Shared CodeQL analysis
+# CodeQL documentation https://github.com/github/codeql-action
+# CodeQL supported languages https://codeql.github.com/docs/codeql-overview/supported-languages-and-frameworks
+# Also see https://docs.github.com/en/code-security/code-scanning/creating-an-advanced-setup-for-code-scanning/customizing-your-advanced-setup-for-code-scanning#changing-the-languages-that-are-analyzed
+
+on:
+  workflow_call:
+    inputs:
+      languages:
+        description: 'Languages to analyze (JSON array, e.g., ["actions"]). See supported languages at https://codeql.github.com/docs/codeql-overview/supported-languages-and-frameworks'
+        required: true
+        type: string
+
+jobs:
+  analyze:
+    name: Analyze code
+    runs-on: ubuntu-24.04
+    permissions:
+      # required for all workflows
+      security-events: write
+      # required to fetch internal or private CodeQL packs
+      packages: read
+      # only required for workflows in private repositories
+      actions: read
+      # repository contents
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ${{ fromJSON(inputs.languages) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ matrix.language }}
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:${{matrix.language}}"
