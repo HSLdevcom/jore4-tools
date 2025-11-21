@@ -1,0 +1,8 @@
+name: Dependency Scan
+
+on:
+  pull_request:
+
+jobs:
+  dependency-scan:
+    uses: HSLdevcom/jore4-tools/.github/workflows/shared-dependency-scan.yml@shared-ghas-workflows-v1
