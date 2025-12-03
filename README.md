@@ -246,15 +246,15 @@ Parameters:
 
 Example usage:
 
-```
-- uses: HSLdevcom/jore4-tools/github-actions/setup-e2e-environment@setup-e2e-environment-v9
+```yaml
+- uses: HSLdevcom/jore4-tools/github-actions/setup-e2e-environment@setup-e2e-environment-v10
   with:
     ui_version: 'docker.registry.example.org/jore4-ui:latest'
 ```
 
-```
+```yaml
 steps:
-- uses: HSLdevcom/jore4-tools/github-actions/setup-e2e-environment@setup-e2e-environment-v9
+- uses: HSLdevcom/jore4-tools/github-actions/setup-e2e-environment@setup-e2e-environment-v10
   with:
     custom_docker_compose: ./docker/docker-compose.custom.yml
 ```
