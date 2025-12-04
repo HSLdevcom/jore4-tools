@@ -11,7 +11,7 @@ on:
           Git repository's main branch.
         type: string
         required: false
-        default: null
+        default: ""
       ui_version:
         description:
           Version of ui to use (docker image tag). Set to "" if using the default
@@ -97,7 +97,8 @@ on:
         required: false
         default: ""
       tiamat_version:
-        description: Version of tiamat to use (docker image tag). Set to "" if using
+        description:
+          Version of tiamat to use (docker image tag). Set to "" if using
           the default version.
         type: string
         required: false
@@ -124,11 +125,10 @@ on:
         required: false
         default: "@smoke"
       video:
-        description:
-          Turn video on or off. Supported values are 'true' and 'false'.
+        description: Turn video on or off. Supported values are 'true' and 'false'.
         type: string
         required: false
-        default: 'false'
+        default: "false"
       update_e2e_test_durations:
         description: |
           Should the E2E test durations be updated to jore4-ci-data repository's e2e-test-durations branch
@@ -140,9 +140,11 @@ on:
         default: false
     secrets:
       jore4_ci_data_repo_ssh_key:
-        description:
-          SSH key that can be used to write to HSLdevcom/jore4-ci-data repository.
+        description: SSH key that can be used to write to HSLdevcom/jore4-ci-data repository.
         required: false
+
+permissions:
+  contents: read
 
 jobs:
   run_e2e_tests:
@@ -231,7 +233,7 @@ jobs:
           cat ${{ github.workspace }}/durations.out.json
 
       - name: Upload test durations
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: "e2e-test-durations-${{ strategy.job-index }}"
           path: ${{ github.workspace }}/durations.out.json
@@ -247,7 +249,7 @@ jobs:
       - name: Upload test reports as an artifact
         # Should be run especially when tests fail
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: cypress-test-results-${{ strategy.job-index }}
           path: ${{ github.workspace }}/ctrf-report.json
@@ -273,7 +275,7 @@ jobs:
 
       - name: Upload test reports as an artifact
         if: always() && steps.copy_test_reports.outputs.test_reports_exist == 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: cypress-docker-reports-${{ strategy.job-index }}
           path: ${{ github.workspace }}/test-reports
@@ -285,7 +287,7 @@ jobs:
       - run_e2e_tests
     steps:
       - name: Download E2E Test Results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         continue-on-error: true
         with:
           pattern: cypress-test-results-*
@@ -294,7 +296,7 @@ jobs:
       - name: Publish Test Report
         uses: ctrf-io/github-test-reporter@27b97adba93f02142c573c8a710045cac0d874ae # v1.0.14
         with:
-          report-path: 'ctrf/*/*.json'
+          report-path: "ctrf/*/*.json"
           summary-report: true
           failed-report: true
           flaky-report: true
@@ -309,15 +311,15 @@ jobs:
       - run_e2e_tests
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
-          repository: 'HSLdevcom/jore4-ci-data'
+          repository: "HSLdevcom/jore4-ci-data"
           ref: e2e-test-durations
           ssh-key: ${{ secrets.jore4_ci_data_repo_ssh_key }}
 
       - name: Download E2E Test Durations
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           pattern: e2e-test-durations-*
           path: ${{ github.workspace }}/split-durations
