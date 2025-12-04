@@ -6,6 +6,9 @@ on:
       - main
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   test-healthcheck-success:
     name: Verifies whether healthcheck action succeeds when it should
@@ -13,7 +16,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Startup sample HTTP server
         run: docker run -d -p 8080:80 nginxdemos/hello

@@ -296,7 +296,7 @@ Example:
 ```
 jobs:
   validate:
-    uses: HSLdevcom/jore4-tools/.github/workflows/shared-check-renovatebot-config.yml@shared-check-renovatebot-config-v1
+    uses: HSLdevcom/jore4-tools/.github/workflows/shared-check-renovatebot-config.yml@shared-check-renovatebot-config-v2
     with:
       config_file_path: renovatebot/jore4-default-preset.json5
 ```

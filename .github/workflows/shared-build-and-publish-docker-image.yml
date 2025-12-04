@@ -24,22 +24,22 @@ on:
         description: Docker build context. This needs to be Git repository context; see https://docs.docker.com/build/concepts/context/#url-fragments
         type: string
         required: false
-        default: null
+        default: ""
       build_args:
         description: Docker build time arguments
         type: string
         required: false
-        default: null
+        default: ""
       target:
         description: Sets the target stage to build
         type: string
         required: false
-        default: null
+        default: ""
       artifact-id:
         description: Artifact ID needed to download for the build.
         type: string
         required: false
-        default: null
+        default: ""
       artifact-path:
         description: Target where to download the artifact.
         type: string
@@ -110,7 +110,7 @@ jobs:
         # Checkout is needed when context is local "."
         # Otherwise the repository code will not be fetched for the build
         if: ${{ inputs.context == '.' }}
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
 
       - name: Download artifacts
         if: ${{ inputs.artifact-id }}

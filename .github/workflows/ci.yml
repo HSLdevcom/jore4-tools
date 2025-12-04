@@ -3,9 +3,12 @@ name: CI
 on:
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   run_e2e_tests_workflow:
     name: Test run E2E tests workflow
     uses: ./.github/workflows/shared-run-e2e.yml
     with:
-      test-tags: ''
+      test-tags: ""

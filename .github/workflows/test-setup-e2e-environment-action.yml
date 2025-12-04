@@ -6,6 +6,9 @@ on:
       - main
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   test-e2e-setup-action:
     runs-on: ubuntu-24.04
@@ -14,48 +17,48 @@ jobs:
       matrix:
         include:
           # no overwrites for images
-          - ui-docker-image:
-            hasura-docker-image:
-            auth-docker-image:
-            mbtiles-docker-image:
-            jore3importer-docker-image:
-            testdb-docker-image:
-            mssqltestdb-docker-image:
-            mapmatching-docker-image:
-            mapmatchingdb-docker-image:
-            cypress-docker-image:
-            hastus-docker-image:
-            custom-docker-compose:
+          - ui-docker-image: ""
+            hasura-docker-image: ""
+            auth-docker-image: ""
+            mbtiles-docker-image: ""
+            jore3importer-docker-image: ""
+            testdb-docker-image: ""
+            mssqltestdb-docker-image: ""
+            mapmatching-docker-image: ""
+            mapmatchingdb-docker-image: ""
+            cypress-docker-image: ""
+            hastus-docker-image: ""
+            custom-docker-compose: ""
           # overwrite some
           - ui-docker-image: "hsldevcom/jore4-ui:latest"
-            hasura-docker-image:
-            auth-docker-image:
-            mbtiles-docker-image:
-            jore3importer-docker-image:
-            testdb-docker-image:
-            mssqltestdb-docker-image:
-            mapmatching-docker-image:
-            mapmatchingdb-docker-image:
-            cypress-docker-image:
-            hastus-docker-image:
-            custom-docker-compose:
+            hasura-docker-image: ""
+            auth-docker-image: ""
+            mbtiles-docker-image: ""
+            jore3importer-docker-image: ""
+            testdb-docker-image: ""
+            mssqltestdb-docker-image: ""
+            mapmatching-docker-image: ""
+            mapmatchingdb-docker-image: ""
+            cypress-docker-image: ""
+            hastus-docker-image: ""
+            custom-docker-compose: ""
           # use custom docker-compose file
-          - ui-docker-image:
-            hasura-docker-image:
-            auth-docker-image:
-            mbtiles-docker-image:
-            jore3importer-docker-image:
-            testdb-docker-image:
-            mssqltestdb-docker-image:
-            mapmatching-docker-image:
-            mapmatchingdb-docker-image:
-            cypress-docker-image:
-            hastus-docker-image:
+          - ui-docker-image: ""
+            hasura-docker-image: ""
+            auth-docker-image: ""
+            mbtiles-docker-image: ""
+            jore3importer-docker-image: ""
+            testdb-docker-image: ""
+            mssqltestdb-docker-image: ""
+            mapmatching-docker-image: ""
+            mapmatchingdb-docker-image: ""
+            cypress-docker-image: ""
+            hastus-docker-image: ""
             custom-docker-compose: "custom-compose.yml" # this overwrites the hasura image to be "jore4-hasura:latest"
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Create a temporary custom docker compose file for testing
         run: |
