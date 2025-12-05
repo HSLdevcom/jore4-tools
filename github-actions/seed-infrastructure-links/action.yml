@@ -6,9 +6,6 @@ inputs:
     description: Database connection string
     required: false
     default: "postgresql://dbadmin:adminpassword@localhost:5432/jore4e2e"
-  seed_data_commit_sha:
-    description: The commit SHA of jore4-ui repository from which infrastructure links seed data is read from
-    required: true
 
 runs:
   using: "composite"
@@ -16,8 +13,8 @@ runs:
     - name: Fetch infrastructure link dump
       shell: bash
       run: |
-        curl https://raw.githubusercontent.com/HSLdevcom/jore4-ui/${{ inputs.seed_data_commit_sha }}/test-db-manager/src/dumps/infraLinks/infraLinks.sql \
-          -o infraLinks.sql
+        curl https://stjore4dev001.blob.core.windows.net/jore4-ui/2025-09-24-infraLinks.sql -o infraLinks.sql
+
 
     - name: Verify that testdb is up, running and migrated
       uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
