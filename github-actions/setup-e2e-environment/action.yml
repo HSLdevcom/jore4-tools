@@ -234,18 +234,6 @@ runs:
         docker logs mssqltestdb
       shell: bash
 
-    - name: Verify that hasura is up and running standalone
-      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
-      with:
-        command: "curl --fail http://localhost:3201/healthz --output /dev/null --silent"
-
-    - name: Verify that hasura is up and running through proxy
-      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
-      with:
-        command:
-          "curl --fail https://e2e.local.jore.hsldev.com/api/graphql/healthz --output
-          /dev/null --silent"
-
     - name: Verify that auth backend is up and running standalone
       uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
       with:
@@ -265,6 +253,18 @@ runs:
       with:
         command:
           "curl --fail https://e2e.local.jore.hsldev.com/api/auth/actuator/health --output
+          /dev/null --silent"
+
+    - name: Verify that hasura is up and running standalone
+      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+      with:
+        command: "curl --fail http://localhost:3201/healthz --output /dev/null --silent"
+
+    - name: Verify that hasura is up and running through proxy
+      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+      with:
+        command:
+          "curl --fail https://e2e.local.jore.hsldev.com/api/graphql/healthz --output
           /dev/null --silent"
 
     - name: Verify that jore3 importer is up and running standalone
