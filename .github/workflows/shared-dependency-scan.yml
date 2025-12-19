@@ -5,6 +5,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: write # Needed to write comment to PR
 
 jobs:
   dependency-review:
@@ -15,3 +16,5 @@ jobs:
 
       - name: Dependency Review
         uses: actions/dependency-review-action@v4
+        with:
+          config-file: HSLdevcom/jore4-tools/.github/dependency-scan-config.yaml@shared-dependency-licenses-v1
