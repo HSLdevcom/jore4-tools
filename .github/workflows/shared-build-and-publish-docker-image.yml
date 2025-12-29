@@ -114,7 +114,7 @@ jobs:
 
       - name: Download artifacts
         if: ${{ inputs.artifact-id }}
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           artifact-ids: ${{ inputs.artifact-id }}
           path: ${{ inputs.artifact-path }}
