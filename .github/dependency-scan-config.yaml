@@ -3,6 +3,13 @@ show-openssf-scorecard: true
 license-check: true
 vulnerability-check: true
 comment-summary-in-pr: always
+fail-on-scopes: runtime
+
+# Add packages here if they fail the check and are ONLY used in development or in CI etc.
+# DO NOT ADD PACKAGES THAT ARE PACKAGED WITH THE BUILD
+allow-dependencies-licenses:
+  # Only used in CI
+  - pkg:githubactions/trufflesecurity/trufflehog
 
 # List of explicitly allowed licenses for EUPL 1.2 Inbound Compatibility
 # (Allows importing these libraries into a EUPL 1.2 project)
