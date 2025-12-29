@@ -17,4 +17,4 @@ jobs:
       - name: Dependency Review
         uses: actions/dependency-review-action@v4
         with:
-          config-file: HSLdevcom/jore4-tools/.github/dependency-scan-config.yaml@shared-dependency-licenses-v1
+          config-file: HSLdevcom/jore4-tools/.github/dependency-scan-config.yaml@main
