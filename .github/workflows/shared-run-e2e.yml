@@ -233,7 +233,7 @@ jobs:
           cat ${{ github.workspace }}/durations.out.json
 
       - name: Upload test durations
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: "e2e-test-durations-${{ strategy.job-index }}"
           path: ${{ github.workspace }}/durations.out.json
@@ -249,7 +249,7 @@ jobs:
       - name: Upload test reports as an artifact
         # Should be run especially when tests fail
         if: always()
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: cypress-test-results-${{ strategy.job-index }}
           path: ${{ github.workspace }}/ctrf-report.json
@@ -275,7 +275,7 @@ jobs:
 
       - name: Upload test reports as an artifact
         if: always() && steps.copy_test_reports.outputs.test_reports_exist == 'true'
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: cypress-docker-reports-${{ strategy.job-index }}
           path: ${{ github.workspace }}/test-reports
@@ -287,7 +287,7 @@ jobs:
       - run_e2e_tests
     steps:
       - name: Download E2E Test Results
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         continue-on-error: true
         with:
           pattern: cypress-test-results-*
@@ -319,7 +319,7 @@ jobs:
           ssh-key: ${{ secrets.jore4_ci_data_repo_ssh_key }}
 
       - name: Download E2E Test Durations
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           pattern: e2e-test-durations-*
           path: ${{ github.workspace }}/split-durations
