@@ -18,6 +18,7 @@ allow-licenses:
   # 1. Public domain / no-attribution
   # ==========================================
   - CC0-1.0
+  - CC-BY-4.0
   - Unlicense
   - WTFPL
   - 0BSD
