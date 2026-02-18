@@ -350,6 +350,10 @@ runs:
              localhost:3201/v1/metadata
       shell: bash
 
+    - name: Show which versions of the docker images are spun up and healthy
+      run: docker ps
+      shell: bash
+
     - name: Verify that all containers are healthy
       run: '[ -z "$(docker ps -q --filter health=unhealthy)" ]'
       shell: bash
