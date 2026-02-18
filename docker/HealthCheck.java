@@ -20,9 +20,11 @@ import java.net.http.HttpResponse.BodyHandlers;
 
 public class HealthCheck {
     public static void main(String[] args) throws IOException, InterruptedException {
+        final var port = args.length > 0 ? args[0] : "8080";
+
         final var client = HttpClient.newHttpClient();
         final var request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:8080/actuator/health"))
+                .uri(URI.create("http://localhost:" + port + "/actuator/health"))
                 .header("accept", "application/json")
                 .build();
 
