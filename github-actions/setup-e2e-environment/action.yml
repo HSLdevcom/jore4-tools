@@ -354,8 +354,35 @@ runs:
       run: docker ps
       shell: bash
 
-    - name: Verify that all containers are healthy
-      run: '[ -z "$(docker ps -q --filter health=unhealthy)" ]'
+    - name: Wait and make sure no container registers as unhealthy
+      run: |
+        unhealhtyContainerIds=""
+        
+        # 30 tries, 10s wait time -> Max wait of 5 minutes
+        # Some of the services only report new HEALTH once per minute.
+        for i in {1..30}; do
+          unhealhtyContainerIds=$(docker ps -q --filter health=unhealthy)
+        
+          if [[ -z "$unhealhtyContainerIds" ]]; then
+            echo "All containers are up and running fine"
+            exit 0
+          else
+            echo "One or more containers report an unhealthy status:"
+            docker container inspect "$unhealhtyContainerIds" | jq '.[] | { Name: .Name, Health: .State.Health }'
+          fi
+        
+          echo "Wait for healthy services. Try $i/30. Waiting 10s for next try."
+          sleep 10s
+        done
+        
+        for id in $unhealhtyContainerIds; do
+          echo "Container $id | $(docker container inspect $id | jq '.[0].Name') failed to register as healthy!"
+          echo "Container $id | logs start: ├─────────────────────────────────────────────────────"
+          docker logs $id
+          echo "Container $id | logs   end: ─────────────────────────────────────────────────────┤"
+        done
+        
+        exit 1
       shell: bash
 
     - name: Extract metadata
