@@ -213,6 +213,7 @@ jobs:
           docker cp e2e-test-durations.json cypress:/e2e/cypress/e2e-test-durations.json
 
       - name: Run the tests
+        id: run_tests
         shell: bash
         run: |
           docker exec \
@@ -279,6 +280,45 @@ jobs:
         with:
           name: cypress-docker-reports-${{ strategy.job-index }}
           path: ${{ github.workspace }}/test-reports
+
+      - name: Collect Docker container logs
+        id: collect_docker_logs
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p ${{ github.workspace }}/docker-logs
+
+          test_server_logs_exist=false
+
+          while IFS= read -r container_name
+          do
+            # The Cypress container logs are already available via test report artifacts.
+            if [[ "${container_name}" == "cypress" ]]
+            then
+              continue
+            fi
+
+            docker logs "${container_name}" > "${{ github.workspace }}/docker-logs/${container_name}.log" 2>&1 || true
+
+            if [[ -s "${{ github.workspace }}/docker-logs/${container_name}.log" ]]
+            then
+              test_server_logs_exist=true
+            fi
+          done < <(docker ps --format '{{.Names}}')
+
+          if [[ "${test_server_logs_exist}" == "true" ]]
+          then
+            find ${{ github.workspace }}/docker-logs -type f
+          fi
+
+          echo "test_server_logs_exist=${test_server_logs_exist}" >> $GITHUB_OUTPUT
+
+      - name: Upload Docker server logs as an artifact
+        if: always() && steps.collect_docker_logs.outputs.test_server_logs_exist == 'true'
+        uses: actions/upload-artifact@v6
+        with:
+          name: cypress-server-logs-${{ strategy.job-index }}
+          path: ${{ github.workspace }}/docker-logs
 
   publish_e2e_test_results:
     name: Publish E2E Test Results
