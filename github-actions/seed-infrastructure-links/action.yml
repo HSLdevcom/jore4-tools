@@ -14,6 +14,7 @@ runs:
       shell: bash
       run: |
         curl https://stjore4dev001.blob.core.windows.net/jore4-ui/2025-09-24-infraLinks.sql -o infraLinks.sql
+        curl https://stjore4dev001.blob.core.windows.net/jore4-ui/tram_infraLinks_2026-01-28.sql -o tram_infraLinks.sql
 
 
     - name: Verify that testdb is up, running and migrated
@@ -27,3 +28,4 @@ runs:
       shell: bash
       run: |
         docker exec -i testdb psql ${{ inputs.db_connection_string }} < infraLinks.sql
+        docker exec -i testdb psql ${{ inputs.db_connection_string }} < tram_infraLinks.sql
