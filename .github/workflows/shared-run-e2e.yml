@@ -179,7 +179,7 @@ jobs:
           start_jore3_importer: "${{ inputs.start_jore3_importer }}"
 
       - name: Seed infrastructure links
-        uses: HSLdevcom/jore4-tools/github-actions/seed-infrastructure-links@seed-infrastructure-links-v5
+        uses: HSLdevcom/jore4-tools/github-actions/seed-infrastructure-links@seed-infrastructure-links-v4
 
       - name: Seed municipalities and fare zones
         uses: HSLdevcom/jore4-tools/github-actions/seed-municipalities-and-fare-zones@seed-municipalities-and-fare-zones-v2
