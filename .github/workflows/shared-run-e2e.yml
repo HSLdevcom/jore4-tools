@@ -234,7 +234,7 @@ jobs:
           cat ${{ github.workspace }}/durations.out.json
 
       - name: Upload test durations
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: "e2e-test-durations-${{ strategy.job-index }}"
           path: ${{ github.workspace }}/durations.out.json
@@ -250,7 +250,7 @@ jobs:
       - name: Upload test reports as an artifact
         # Should be run especially when tests fail
         if: always()
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: cypress-test-results-${{ strategy.job-index }}
           path: ${{ github.workspace }}/ctrf-report.json
@@ -276,7 +276,7 @@ jobs:
 
       - name: Upload test reports as an artifact
         if: always() && steps.copy_test_reports.outputs.test_reports_exist == 'true'
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: cypress-docker-reports-${{ strategy.job-index }}
           path: ${{ github.workspace }}/test-reports
@@ -316,7 +316,7 @@ jobs:
 
       - name: Upload Docker server logs as an artifact
         if: always() && steps.collect_docker_logs.outputs.test_server_logs_exist == 'true'
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: cypress-server-logs-${{ strategy.job-index }}
           path: ${{ github.workspace }}/docker-logs
@@ -328,14 +328,14 @@ jobs:
       - run_e2e_tests
     steps:
       - name: Download E2E Test Results
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         continue-on-error: true
         with:
           pattern: cypress-test-results-*
           path: ${{ github.workspace }}/ctrf
 
       - name: Publish Test Report
-        uses: ctrf-io/github-test-reporter@024bc4b64d997ca9da86833c6b9548c55c620e40 # v1.0.26
+        uses: ctrf-io/github-test-reporter@31e2a2735dd4641c65c2f49eb07e93ce8ec37fff # v1.0.27
         with:
           report-path: "ctrf/*/*.json"
           summary-report: true
@@ -360,7 +360,7 @@ jobs:
           ssh-key: ${{ secrets.jore4_ci_data_repo_ssh_key }}
 
       - name: Download E2E Test Durations
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           pattern: e2e-test-durations-*
           path: ${{ github.workspace }}/split-durations
