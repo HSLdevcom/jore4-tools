@@ -70,6 +70,7 @@ allow-licenses:
   - APSL-2.0
   - Artistic-1.0-Perl
   - Artistic-2.0
+  - BlueOak-1.0.0
   - BSL-1.0
   - CATOSL-1.1
   - CPAL-1.0
