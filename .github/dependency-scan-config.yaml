@@ -7,9 +7,16 @@ fail-on-scopes: runtime
 
 # Add packages here if they fail the check and are ONLY used in development or in CI etc.
 # DO NOT ADD PACKAGES THAT ARE PACKAGED WITH THE BUILD
+# OR IF THIS ACTION IS BROKEN AND IS REPORTING WRONG LICENSE FOR A PACKAGE!!!
+# OR IF SOME SPECIAL CASE IS NEEDED FOR SOME OTHER REASON.
 allow-dependencies-licenses:
   # Only used in CI
   - pkg:githubactions/trufflesecurity/trufflehog
+  # Uses and has always used MIT license, but this action thinks it is GPL-3
+  - pkg:npm/knex
+  # Complex licensing. Project contains fragments of code from multiple other projects and sources.
+  # So parts of the code are under several different OSS licenses.
+  - pkg:npm/mapbox-gl
 
 # List of explicitly allowed licenses for EUPL 1.2 Inbound Compatibility
 # (Allows importing these libraries into a EUPL 1.2 project)
