@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Startup sample HTTP server
         run: docker run -d -p 8080:80 nginxdemos/hello
