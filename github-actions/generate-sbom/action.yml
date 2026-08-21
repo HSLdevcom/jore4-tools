@@ -1,0 +1,137 @@
+name: "Generate SBOM"
+description: >
+  Generates an SPDX-compatible Software Bill of Materials (SBOM) using Microsoft's sbom-tool
+  and optionally uploads it as a GitHub Actions artifact. Supports npm, yarn, Maven, Gradle
+  and other ecosystems via component-detection.
+
+inputs:
+  build_drop_path:
+    description: Path to the build output / artifacts that the SBOM describes
+    required: true
+  build_components_paths:
+    description: >
+      Space or newline separated list of paths to source / project files
+      (e.g. where package.json, pom.xml or yarn.lock lives) for dependency scanning.
+      Supports multiple paths for monorepos.
+    required: false
+    default: "."
+  package_name:
+    description: >
+      Package name used in the SBOM. Defaults to the repository name (e.g. jore4-ui)
+      if not provided.
+    required: false
+    default: ""
+  package_version:
+    description: Package version. Defaults to the commit SHA if not provided.
+    required: false
+    default: ""
+  package_supplier:
+    description: Package supplier / organization name. Defaults to HSLdevcom.
+    required: false
+    default: ""
+  namespace_base_uri:
+    description: Base URI for the SPDX document namespace. Defaults to https://github.com/HSLdevcom.
+    required: false
+    default: ""
+  sbom_output_path:
+    description: >
+      Custom output directory for the SBOM manifest. When empty, defaults to
+      <build_drop_path>/_manifest/
+    required: false
+    default: ""
+  sbom_format:
+    description: "SPDX manifest format version: SPDX:2.2 (default) or SPDX:3.0"
+    required: false
+    default: "SPDX:2.2"
+  artifact_name:
+    description: Name of the uploaded GitHub Actions artifact
+    required: false
+    default: "sbom"
+  upload_artifact:
+    description: Whether to upload the SBOM as a GitHub Actions artifact
+    required: false
+    default: "true"
+  sbom_tool_version:
+    description: >
+      sbom-tool release version to use (e.g. v3.1.0). Use "latest" for the most recent release.
+    required: false
+    default: "latest"
+
+outputs:
+  sbom_path:
+    description: Path to the directory containing the generated SBOM manifest
+    value: ${{ steps.resolve-output-path.outputs.sbom_path }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Download sbom-tool
+      shell: bash
+      run: |
+        if [[ "${{ inputs.sbom_tool_version }}" == "latest" ]]; then
+          DOWNLOAD_URL="https://github.com/microsoft/sbom-tool/releases/latest/download/sbom-tool-linux-x64"
+        else
+          DOWNLOAD_URL="https://github.com/microsoft/sbom-tool/releases/download/${{ inputs.sbom_tool_version }}/sbom-tool-linux-x64"
+        fi
+        echo "Downloading sbom-tool from ${DOWNLOAD_URL}"
+        curl -Lo "$RUNNER_TEMP/sbom-tool" "$DOWNLOAD_URL"
+        chmod +x "$RUNNER_TEMP/sbom-tool"
+
+    - name: Resolve defaults
+      id: resolve-defaults
+      shell: bash
+      run: |
+        resolve() {
+          local value="$1" fallback="$2" key="$3"
+          echo "${key}=${value:-$fallback}" >> "$GITHUB_OUTPUT"
+        }
+        resolve "${{ inputs.package_name }}"      "${GITHUB_REPOSITORY#*/}"   package_name
+        resolve "${{ inputs.package_version }}"   "$GITHUB_SHA"               package_version
+        resolve "${{ inputs.package_supplier }}"   "HSLdevcom"                 package_supplier
+        resolve "${{ inputs.namespace_base_uri }}" "https://github.com/HSLdevcom" namespace_base_uri
+
+    - name: Generate SBOM
+      shell: bash
+      run: |
+        GENERATE_ARGS=(
+          -b "${{ inputs.build_drop_path }}"
+          -pn "${{ steps.resolve-defaults.outputs.package_name }}"
+          -pv "${{ steps.resolve-defaults.outputs.package_version }}"
+          -ps "${{ steps.resolve-defaults.outputs.package_supplier }}"
+          -nsb "${{ steps.resolve-defaults.outputs.namespace_base_uri }}"
+          -V Verbose
+        )
+
+        # Add each component path as a separate -bc argument
+        while IFS= read -r path || [[ -n "$path" ]]; do
+          [[ -z "$path" ]] && continue
+          GENERATE_ARGS+=(-bc "$path")
+        done <<< "${{ inputs.build_components_paths }}"
+
+        if [[ -n "${{ inputs.sbom_output_path }}" ]]; then
+          GENERATE_ARGS+=(-manifestDirPath "${{ inputs.sbom_output_path }}")
+        fi
+
+        if [[ "${{ inputs.sbom_format }}" != "SPDX:2.2" ]]; then
+          GENERATE_ARGS+=(-mi "${{ inputs.sbom_format }}")
+        fi
+
+        echo "Running: sbom-tool generate ${GENERATE_ARGS[*]}"
+        "$RUNNER_TEMP/sbom-tool" generate "${GENERATE_ARGS[@]}"
+
+    - name: Resolve SBOM output path
+      id: resolve-output-path
+      shell: bash
+      run: |
+        if [[ -n "${{ inputs.sbom_output_path }}" ]]; then
+          echo "sbom_path=${{ inputs.sbom_output_path }}" >> "$GITHUB_OUTPUT"
+        else
+          echo "sbom_path=${{ inputs.build_drop_path }}/_manifest" >> "$GITHUB_OUTPUT"
+        fi
+
+    - name: Upload SBOM artifact
+      if: ${{ inputs.upload_artifact == 'true' }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.artifact_name }}
+        path: ${{ steps.resolve-output-path.outputs.sbom_path }}
