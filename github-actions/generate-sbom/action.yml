@@ -56,6 +56,12 @@ inputs:
       sbom-tool release version to use (e.g. v3.1.0). Use "latest" for the most recent release.
     required: false
     default: "latest"
+  exclude_directories:
+    description: >
+      Semicolon-separated glob patterns of directories to exclude from dependency scanning.
+      Example: "**/jore4-hasura;**/node_modules"
+    required: false
+    default: ""
 
 outputs:
   sbom_path:
@@ -98,7 +104,10 @@ runs:
           echo "sbom_path=${{ inputs.build_drop_path }}/_manifest" >> "$GITHUB_OUTPUT"
         fi
         if [[ "${{ inputs.sbom_format }}" != "SPDX:2.2" ]]; then
-          EXTRA_ARGS+="-mi ${{ inputs.sbom_format }}"
+          EXTRA_ARGS+="-mi ${{ inputs.sbom_format }} "
+        fi
+        if [[ -n "${{ inputs.exclude_directories }}" ]]; then
+          EXTRA_ARGS+="-cd --DirectoryExclusionList ${{ inputs.exclude_directories }}"
         fi
         echo "extra_args=$EXTRA_ARGS" >> "$GITHUB_OUTPUT"
 
