@@ -6,8 +6,11 @@ description: >
 
 inputs:
   build_drop_path:
-    description: Path to the build output / artifacts that the SBOM describes
-    required: true
+    description: >
+      Path to the build output / artifacts that the SBOM describes.
+      Defaults to an empty temp directory (useful when only dependency scanning is needed).
+    required: false
+    default: ""
   build_components_paths:
     description: >
       Space or newline separated list of paths to source / project files
@@ -96,17 +99,23 @@ runs:
         resolve "${{ inputs.package_supplier }}"   "HSLdevcom"                 package_supplier
         resolve "${{ inputs.namespace_base_uri }}" "https://github.com/HSLdevcom" namespace_base_uri
 
+        BUILD_DROP="${{ inputs.build_drop_path }}"
+        if [[ -z "$BUILD_DROP" ]]; then
+          BUILD_DROP=$(mktemp -d)
+        fi
+        echo "build_drop_path=$BUILD_DROP" >> "$GITHUB_OUTPUT"
+
         if [[ -n "${{ inputs.sbom_output_path }}" ]]; then
           echo "sbom_path=${{ inputs.sbom_output_path }}" >> "$GITHUB_OUTPUT"
         else
-          echo "sbom_path=${{ inputs.build_drop_path }}/_manifest" >> "$GITHUB_OUTPUT"
+          echo "sbom_path=$BUILD_DROP/_manifest" >> "$GITHUB_OUTPUT"
         fi
 
     - name: Generate SBOM
       shell: bash
       run: |
         GENERATE_ARGS=(
-          -b "${{ inputs.build_drop_path }}"
+          -b "${{ steps.resolve-defaults.outputs.build_drop_path }}"
           -pn "${{ steps.resolve-defaults.outputs.package_name }}"
           -pv "${{ steps.resolve-defaults.outputs.package_version }}"
           -ps "${{ steps.resolve-defaults.outputs.package_supplier }}"
@@ -127,7 +136,7 @@ runs:
           GENERATE_ARGS+=(-mi "${{ inputs.sbom_format }}")
         fi
         if [[ -n "${{ inputs.exclude_directories }}" ]]; then
-          GENERATE_ARGS+=("-cd=--DirectoryExclusionList ${{ inputs.exclude_directories }}")
+          GENERATE_ARGS+=(-cd "--DirectoryExclusionList=${{ inputs.exclude_directories }}")
         fi
 
         echo "Running: sbom-tool generate ${GENERATE_ARGS[*]}"
