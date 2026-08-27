@@ -127,7 +127,7 @@ runs:
           GENERATE_ARGS+=(-mi "${{ inputs.sbom_format }}")
         fi
         if [[ -n "${{ inputs.exclude_directories }}" ]]; then
-          GENERATE_ARGS+=(-cd "--DirectoryExclusionList ${{ inputs.exclude_directories }}")
+          GENERATE_ARGS+=("-cd=--DirectoryExclusionList ${{ inputs.exclude_directories }}")
         fi
 
         echo "Running: sbom-tool generate ${GENERATE_ARGS[*]}"
