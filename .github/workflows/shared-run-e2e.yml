@@ -283,7 +283,7 @@ jobs:
 
       - name: Collect Docker container logs
         id: collect_docker_logs
-        if: always()
+        if: false
         shell: bash
         run: |
           mkdir -p ${{ github.workspace }}/docker-logs
