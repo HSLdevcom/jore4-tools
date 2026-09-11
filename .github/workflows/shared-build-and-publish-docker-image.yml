@@ -30,6 +30,11 @@ on:
         type: string
         required: false
         default: ""
+      build_contexts:
+        description: Extra build contexts
+        type: string
+        required: false
+        default: ""
       target:
         description: Sets the target stage to build
         type: string
@@ -133,5 +138,6 @@ jobs:
           platforms: ${{ inputs.build_arm64_image && 'linux/amd64,linux/arm64' || 'linux/amd64' }}
           context: ${{ inputs.context }}
           build-args: ${{ inputs.build_args }}
+          build-contexts: ${{ inputs.build_contexts }}
           file: ${{ inputs.file }}
           target: ${{ inputs.target }}
