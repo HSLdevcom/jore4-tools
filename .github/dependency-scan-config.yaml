@@ -17,6 +17,12 @@ allow-dependencies-licenses:
   # Complex licensing. Project contains fragments of code from multiple other projects and sources.
   # So parts of the code are under several different OSS licenses.
   - pkg:npm/mapbox-gl
+  # Declares PSF-2.0 (code extracted from CPython asyncio), but the bundled license text makes
+  # the scanner report a GPL-1.0-or-later / Python-2.0 mix.
+  - pkg:pypi/aiohappyeyeballs
+  # Declares PSF-2.0 (CPython typing backport), but the bundled license text makes the scanner
+  # report a GPL-1.0-or-later / Python-2.0 mix.
+  - pkg:pypi/typing-extensions
 
 # List of explicitly allowed licenses for EUPL 1.2 Inbound Compatibility
 # (Allows importing these libraries into a EUPL 1.2 project)
@@ -34,6 +40,7 @@ allow-licenses:
   # 2. Standard permissive
   # ==========================================
   - MIT
+  - MIT-0
   - Apache-2.0
   - ISC
   - BSD-2-Clause
