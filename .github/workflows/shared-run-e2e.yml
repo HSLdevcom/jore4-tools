@@ -149,7 +149,7 @@ permissions:
 jobs:
   run_e2e_tests:
     name: Run e2e tests
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       fail-fast: false
       matrix:
@@ -323,7 +323,7 @@ jobs:
 
   publish_e2e_test_results:
     name: Publish E2E Test Results
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     needs:
       - run_e2e_tests
     steps:
@@ -346,7 +346,7 @@ jobs:
 
   update_e2e_test_durations:
     name: Update E2E Test Durations
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     if: ${{ inputs.update_e2e_test_durations }}
     needs:
       - run_e2e_tests

@@ -63,7 +63,7 @@ permissions:
 
 jobs:
   shared_build_and_publish_docker_image:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     outputs:
       docker_image: ${{ steps.variables.outputs.docker_image }}
     steps:
