@@ -33,13 +33,6 @@ on:
         type: string
         required: false
         default: ""
-      mbtiles_version:
-        description:
-          Version of mbtiles server to use (docker image tag). Set to "" if using
-          the default version.
-        type: string
-        required: false
-        default: ""
       jore3importer_version:
         description:
           Version of jore3importer to use (docker image tag). Set to "" if using the
@@ -166,7 +159,6 @@ jobs:
           cypress_version: "${{ inputs.cypress_version }}"
           hasura_version: "${{ inputs.hasura_version }}"
           auth_version: "${{ inputs.auth_version }}"
-          mbtiles_version: "${{ inputs.mbtiles_version }}"
           jore3importer_version: "${{ inputs.jore3importer_version }}"
           testdb_version: "${{ inputs.testdb_version }}"
           mssqltestdb_version: "${{ inputs.mssqltestdb_version }}"
