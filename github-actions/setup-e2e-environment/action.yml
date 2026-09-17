@@ -28,12 +28,6 @@ inputs:
       version.
     required: false
     default: ""
-  mbtiles_version:
-    description:
-      Version of mbtiles server to use (docker image tag). Set to "" if using
-      the default version.
-    required: false
-    default: ""
   jore3importer_version:
     description:
       Version of jore3importer to use (docker image tag). Set to "" if using the
@@ -137,7 +131,6 @@ runs:
         UI_DOCKER_IMAGE=${{ inputs.ui_version }}
         HASURA_DOCKER_IMAGE=${{ inputs.hasura_version }}
         AUTH_DOCKER_IMAGE=${{ inputs.auth_version }}
-        MBTILES_DOCKER_IMAGE=${{ inputs.mbtiles_version }}
         JORE3IMPORTER_DOCKER_IMAGE=${{ inputs.jore3importer_version }}
         TESTDB_DOCKER_IMAGE=${{ inputs.testdb_version }}
         MSSQLTESTDB_DOCKER_IMAGE=${{ inputs.mssqltestdb_version }}
@@ -279,19 +272,6 @@ runs:
       uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
       with:
         command: "docker exec cypress yarn cypress --version"
-
-    - name: Verify that mbtiles server is up and running standalone
-      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
-      with:
-        command: "curl --fail http://localhost:3203/services --output /dev/null
-          --silent"
-
-    - name: Verify that mbtiles server is up and running through proxy
-      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
-      with:
-        command:
-          "curl --fail https://e2e.local.jore.hsldev.com/api/mbtiles/services --output
-          /dev/null --silent"
 
     - name: Verify that hastus importer is up and running standalone
       uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1

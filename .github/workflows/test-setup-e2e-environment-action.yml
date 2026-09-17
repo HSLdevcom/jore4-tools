@@ -20,7 +20,6 @@ jobs:
           - ui-docker-image: ""
             hasura-docker-image: ""
             auth-docker-image: ""
-            mbtiles-docker-image: ""
             jore3importer-docker-image: ""
             testdb-docker-image: ""
             mssqltestdb-docker-image: ""
@@ -33,7 +32,6 @@ jobs:
           - ui-docker-image: "crjore4prod001.azurecr.io/jore4-ui:latest"
             hasura-docker-image: ""
             auth-docker-image: ""
-            mbtiles-docker-image: ""
             jore3importer-docker-image: ""
             testdb-docker-image: ""
             mssqltestdb-docker-image: ""
@@ -46,7 +44,6 @@ jobs:
           - ui-docker-image: ""
             hasura-docker-image: ""
             auth-docker-image: ""
-            mbtiles-docker-image: ""
             jore3importer-docker-image: ""
             testdb-docker-image: ""
             mssqltestdb-docker-image: ""
@@ -73,7 +70,6 @@ jobs:
           ui_version: ${{ matrix.ui-docker-image }}
           hasura_version: ${{ matrix.hasura-docker-image }}
           auth_version: ${{ matrix.auth-docker-image }}
-          mbtiles_version: ${{ matrix.mbtiles-docker-image }}
           jore3importer_version: ${{ matrix.jore3importer-docker-image }}
           testdb_version: ${{ matrix.testdb-docker-image }}
           mssqltestdb_version: ${{ matrix.mssqltestdb-docker-image }}
