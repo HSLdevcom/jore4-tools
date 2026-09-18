@@ -179,7 +179,6 @@ Arguments:
 - `ui_version`: UI Docker image
 - `hasura_version`: Hasura Docker image
 - `auth_version`: Auth Docker image
-- `mbtiles_version`: MB Tiles Docker image
 - `jore3importer_version`: Jore3 Importer Docker image
 - `testdb_version`: Docker Test DB image
 - `mssqltestdb_version`: MSSQL Docker image
