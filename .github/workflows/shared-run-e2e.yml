@@ -283,7 +283,7 @@ jobs:
 
       - name: Collect Docker container logs
         id: collect_docker_logs
-        if: false
+        if: always()
         shell: bash
         run: |
           mkdir -p ${{ github.workspace }}/docker-logs
@@ -298,9 +298,9 @@ jobs:
               continue
             fi
 
-            docker logs "${container_name}" > "${{ github.workspace }}/docker-logs/${container_name}.log" 2>&1 || true
+            docker logs "${container_name}" 2>&1 | gzip -c > "${{ github.workspace }}/docker-logs/${container_name}.log.gz" || true
 
-            if [[ -s "${{ github.workspace }}/docker-logs/${container_name}.log" ]]
+            if [[ -s "${{ github.workspace }}/docker-logs/${container_name}.log.gz" ]]
             then
               test_server_logs_exist=true
             fi
