@@ -13,8 +13,7 @@ runs:
     - name: Fetch infrastructure link dump
       shell: bash
       run: |
-        curl https://stjore4dev001.blob.core.windows.net/jore4-ui/2025-09-24-infraLinks.sql -o infraLinks.sql
-        curl https://stjore4dev001.blob.core.windows.net/jore4-ui/tram_infraLinks_2026-01-28.sql -o tram_infraLinks.sql
+        curl https://stjore4dev001.blob.core.windows.net/jore4-ui/infraLinks_digiroad_r_2026-01_mml_2026-08-04.sql -o infraLinks.sql
 
 
     - name: Verify that testdb is up, running and migrated
@@ -28,4 +27,3 @@ runs:
       shell: bash
       run: |
         docker exec -i testdb psql ${{ inputs.db_connection_string }} < infraLinks.sql
-        docker exec -i testdb psql ${{ inputs.db_connection_string }} < tram_infraLinks.sql
