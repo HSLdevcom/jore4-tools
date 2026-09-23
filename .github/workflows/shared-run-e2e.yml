@@ -152,7 +152,7 @@ jobs:
         uses: actions/checkout@v7
       - name: Start e2e env
         id: start-e2e-env
-        uses: HSLdevcom/jore4-tools/github-actions/setup-e2e-environment@setup-e2e-environment-v11
+        uses: HSLdevcom/jore4-tools/github-actions/setup-e2e-environment@main
         with:
           docker_compose_bundle_gha_artifact: "${{ inputs.docker_compose_bundle_gha_artifact }}"
           ui_version: "${{ inputs.ui_version }}"
@@ -171,10 +171,10 @@ jobs:
           start_jore3_importer: "${{ inputs.start_jore3_importer }}"
 
       - name: Seed infrastructure links
-        uses: HSLdevcom/jore4-tools/github-actions/seed-infrastructure-links@seed-infrastructure-links-v5
+        uses: HSLdevcom/jore4-tools/github-actions/seed-infrastructure-links@main
 
       - name: Seed municipalities and fare zones
-        uses: HSLdevcom/jore4-tools/github-actions/seed-municipalities-and-fare-zones@seed-municipalities-and-fare-zones-v2
+        uses: HSLdevcom/jore4-tools/github-actions/seed-municipalities-and-fare-zones@main
         with:
           seed_data_commit_sha: "${{ steps.start-e2e-env.outputs.e2e_source_commit_sha }}"
 

@@ -18,7 +18,7 @@ runs:
 
 
     - name: Verify that testdb is up, running and migrated
-      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@main
       with:
         command: "[[ $(docker exec testdb psql ${{ inputs.db_connection_string }} -AXqtc \"SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'infrastructure_network' AND tablename = 'infrastructure_link');\") = \"t\" ]]"
         # it takes a while for the database to start

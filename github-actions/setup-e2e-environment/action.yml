@@ -172,18 +172,18 @@ runs:
       shell: bash
 
     - name: Verify that UI is up and running standalone
-      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@main
       with:
         command: "curl --fail http://localhost:3302 --output /dev/null --silent"
 
     - name: Verify that UI is up and running through proxy
-      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@main
       with:
         command: "curl --fail https://e2e.local.jore.hsldev.com --output /dev/null --silent"
 
     - name: Verify that postgresql is up and running
       id: verify_postgresql_started
-      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@main
       with:
         command: "pg_isready -h localhost -p 6432"
         # it takes a while for the database to start
@@ -198,7 +198,7 @@ runs:
     - name: Verify that mssql testdb is up and running
       id: verify_mssql_started
       if: ${{ inputs.start_jore3_importer == 'true' }}
-      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@main
       env:
         SA_PASSWORD: "P@ssw0rd"
       with:
@@ -228,33 +228,33 @@ runs:
       shell: bash
 
     - name: Verify that hasura is up and running standalone
-      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@main
       with:
         command: "curl --fail http://localhost:3201/healthz --output /dev/null --silent"
 
     - name: Verify that hasura is up and running through proxy
-      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@main
       with:
         command:
           "curl --fail https://e2e.local.jore.hsldev.com/api/graphql/healthz --output
           /dev/null --silent"
 
     - name: Verify that auth backend is up and running standalone
-      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@main
       with:
         command:
           "curl --fail http://localhost:3200/actuator/health --output /dev/null
           --silent"
 
     - name: Verify that auth backend has access to database
-      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@main
       with:
         command:
           "curl --fail http://localhost:3200/public/v1/login --output /dev/null
           --silent"
 
     - name: Verify that auth backend is up and running through proxy
-      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@main
       with:
         command:
           "curl --fail https://e2e.local.jore.hsldev.com/api/auth/actuator/health --output
@@ -262,58 +262,58 @@ runs:
 
     - name: Verify that jore3 importer is up and running standalone
       if: ${{ inputs.start_jore3_importer == 'true' }}
-      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@main
       with:
         command:
           "curl --fail http://localhost:3004/actuator/health --output /dev/null
           --silent"
 
     - name: Verify that cypress test container is up and running standalone
-      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@main
       with:
         command: "docker exec cypress yarn cypress --version"
 
     - name: Verify that hastus importer is up and running standalone
-      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@main
       with:
         command:
           "curl --fail http://localhost:3008/actuator/health --output /dev/null
           --silent"
 
     - name: Verify that hastus importer is up and running through proxy
-      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@main
       with:
         command:
           "curl --fail https://e2e.local.jore.hsldev.com/api/hastus/actuator/health --output
           /dev/null --silent"
 
     - name: Verify that timetables-api is up and running standalone
-      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@main
       with:
         command: "curl --fail http://localhost:3009/actuator/health --output
           /dev/null --silent"
 
     - name: Verify that map matching database is up and running standalone
-      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@main
       with:
         command: "pg_isready -h localhost -p 6433"
 
     - name: Verify that map matching server is up and running standalone
-      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@main
       with:
         command:
           "curl --fail http://localhost:3005/actuator/health --output /dev/null
           --silent"
 
     - name: Verify that map matching server is up and running through proxy
-      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@main
       with:
         command:
           "curl --fail https://e2e.local.jore.hsldev.com/api/mapmatching/actuator/health
           --output /dev/null --silent"
 
     - name: Verify that tiamat is up and running standalone
-      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@main
       with:
         command: "curl --fail http://localhost:3010/actuator/health --output
           /dev/null --silent"

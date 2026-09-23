@@ -19,7 +19,7 @@ runs:
           -o hsl-zones-netex.xml
 
     - name: Verify that tiamat is up and wait if needed
-      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@healthcheck-v1
+      uses: HSLdevcom/jore4-tools/github-actions/healthcheck@main
       with:
         command: "curl --fail http://localhost:3010/actuator/health --output
           /dev/null --silent"
