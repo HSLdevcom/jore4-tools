@@ -142,7 +142,7 @@ permissions:
 jobs:
   run_e2e_tests:
     name: Run e2e tests
-    runs-on: ubuntu-26.04
+    runs-on: ubuntu-latest-4-cores
     strategy:
       fail-fast: false
       matrix:
