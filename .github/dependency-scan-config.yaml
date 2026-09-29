@@ -23,6 +23,8 @@ allow-dependencies-licenses:
   # Declares PSF-2.0 (CPython typing backport), but the bundled license text makes the scanner
   # report a GPL-1.0-or-later / Python-2.0 mix.
   - pkg:pypi/typing-extensions
+  # Actually Apache-2.0, but the scanner's license DB reports LicenseRef-bad-non-standard for it.
+  - pkg:maven/org.codehaus.mojo/build-helper-maven-plugin
 
 # List of explicitly allowed licenses for EUPL 1.2 Inbound Compatibility
 # (Allows importing these libraries into a EUPL 1.2 project)
