@@ -142,6 +142,23 @@ runs:
         TIAMAT_DOCKER_IMAGE=${{ inputs.tiamat_version }}
         EOF
 
+    # Cap per-container json-file logs so verbose or crash-looping services cannot fill the runner disk.
+    - name: Configure Docker log rotation
+      shell: bash
+      run: |
+        sudo mkdir -p /etc/docker
+
+        existing='{}'
+        if [[ -f /etc/docker/daemon.json ]]; then
+          existing=$(sudo cat /etc/docker/daemon.json)
+        fi
+
+        echo "${existing}" \
+          | jq '. + {"log-driver": "json-file", "log-opts": {"max-size": "10m", "max-file": "3"}}' \
+          | sudo tee /etc/docker/daemon.json
+
+        sudo systemctl restart docker
+
     # The services that take a long while to start are started first so they can start in the background while
     # Docker images for the rest of the services are being downloaded
     - name: Start e2e environment (pre)
