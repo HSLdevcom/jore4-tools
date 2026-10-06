@@ -23,6 +23,9 @@ allow-dependencies-licenses:
   # Declares PSF-2.0 (CPython typing backport), but the bundled license text makes the scanner
   # report a GPL-1.0-or-later / Python-2.0 mix.
   - pkg:pypi/typing-extensions
+  # License check claims pymssql is under CAL-1.0 AND LGPL-2.1-only licenses, but in reality
+  # has only the LGPL-2.1-only license.
+  - pkg:pypi/pymssql
   # Actually Apache-2.0, but the scanner's license DB reports LicenseRef-bad-non-standard for it.
   - pkg:maven/org.codehaus.mojo/build-helper-maven-plugin
 
