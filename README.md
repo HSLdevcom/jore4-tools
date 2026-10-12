@@ -130,15 +130,22 @@ The workflow updates *latest* and *cache* image if the workflow has been trigger
 
 Arguments:
 
-- `acr_name` (optional): Name of the ACR registry to use. By default crjore4prod001
+- `acr_name` (optional): Name of the ACR registry to use. By default, crjore4prod001
 - `docker_image_name` (required): Name of the Docker image in ACR
-- `build_arm64_image` (optional): Set to `true` if ARM64 image should be build in addition to amd64 image
+- `build_arm64_image` (optional): Set to `true` if ARM64 image should be built in addition to amd64 image
 - `file` (optional): Path to Dockerfile (`Dockerfile` by default)
-- `context` (optional): Set the build context which must be a Git context, i.e. reference to a Git repository as the
-  workflow does not checkout the repository. For supported format see https://docs.docker.com/build/concepts/context/#url-fragments
-  The parameter is passed to docker/build-push-action's context argument which by default uses format
+- `context` (optional): Set the build context, directory in the repo or a reference to a Git repository.
+  For supported format see https://docs.docker.com/build/concepts/context/#url-fragments
   `<github_server_url>/<organization>/<repository>.git/#<ref>` (see https://github.com/docker/actions-toolkit/blob/v0.56.0/src/context.ts#L58)
 - `build_args` (optional): List of build time arguments for Docker build
+- `tag` (optional): An optional extra tag to apply to the build image, if built on main branch.
+- `target` (optional): An optional Docker file build target in a multistage build.
+
+Outputs:
+
+- `docker_image`: The full reference to the primary tag of the built image.
+  e.g. `crjore4prod001.azurecr.io/jore4-microservice:my-feature-branch--2026-09-21-5fb7...`
+- `docker_image_tag`: Only the tag primary tag portion of the built image. e.g. `my-feature-branch--2026-09-21-5fb7...`
 
 The workflow uses the following credentials:
 
