@@ -10,11 +10,6 @@ on:
       docker_image_name:
         type: string
         required: true
-      build_arm64_image:
-        description: Should arm64 Docker image be built
-        type: boolean
-        required: false
-        default: false
       file:
         description: Path to Dockerfile
         type: string
@@ -35,16 +30,11 @@ on:
         type: string
         required: false
         default: ""
-      artifact-id:
-        description: Artifact ID needed to download for the build.
-        type: string
+      build_arm64_image:
+        description: Should arm64 Docker image be built
+        type: boolean
         required: false
-        default: ""
-      artifact-path:
-        description: Target where to download the artifact.
-        type: string
-        required: false
-        default: .
+        default: false
     secrets:
       azure_tenant_id:
         required: true
@@ -53,19 +43,30 @@ on:
       azure_client_id:
         required: true
     outputs:
+      # Our own outputs
       docker_image:
         description: Docker image with tag
-        value: ${{ jobs.shared_build_and_publish_docker_image.outputs.docker_image }}
+        value: ${{ jobs.set_variables.outputs.docker_image }}
+
+      docker_image_tag:
+        description: Tag of the generated images
+        value: ${{ jobs.set_variables.outputs.docker_image_tag }}
 
 permissions:
   id-token: write
   contents: read
 
 jobs:
-  shared_build_and_publish_docker_image:
-    runs-on: ubuntu-latest-4-cores
+  set_variables:
+    name: Generate image tags and names
+    runs-on: ubuntu-slim
     outputs:
+      docker_image_latest: ${{ steps.variables.outputs.docker_image_latest }}
+      docker_image_cache: ${{ steps.variables.outputs.docker_image_cache }}
       docker_image: ${{ steps.variables.outputs.docker_image }}
+      docker_image_tag: ${{ steps.variables.outputs.docker_image_tag }}
+      build_outputs: ${{ steps.variables.outputs.build_outputs }}
+      build_matrix: ${{ steps.variables.outputs.build_matrix }}
     steps:
       - name: Set variables
         id: variables
@@ -78,21 +79,43 @@ jobs:
           ref="${GITHUB_HEAD_REF:-${GITHUB_REF}}"
 
           # Strip refs/heads/ or refs/tags/ out
-          ref_name=$(basename ${ref})
+          ref_name=$(basename "${ref}")
 
-          docker_tag=$(echo -n "${ref_name}" | tr -C '0-9a-zA-Z._' '-')-$(date +%Y-%m-%d)-${GITHUB_SHA}
+          docker_image_tag=$(echo -n "${ref_name}" | tr -C '0-9a-zA-Z._' '-')-$(date +%Y-%m-%d)-${GITHUB_SHA}
 
           base_docker_image=${{ inputs.acr_name }}.azurecr.io/${{ inputs.docker_image_name }}
-          echo "docker_image_latest=${base_docker_image}:latest" >> ${GITHUB_OUTPUT}
-          echo "docker_image_cache=${base_docker_image}:cache" >> ${GITHUB_OUTPUT}
-          echo "docker_image=${base_docker_image}:${docker_tag}" >> ${GITHUB_OUTPUT}
+          echo "docker_image_latest=${base_docker_image}:latest" | tee -a "${GITHUB_OUTPUT}"
+          echo "docker_image_cache=${base_docker_image}:cache" | tee -a "${GITHUB_OUTPUT}"
+          echo "docker_image=${base_docker_image}:${docker_image_tag}" | tee -a "${GITHUB_OUTPUT}"
+          echo "docker_image_tag=${docker_image_tag}" | tee -a "${GITHUB_OUTPUT}"
+          
+          # Setup Docker build action outputs declaration
+          printf 'build_outputs=type=image,"name=%s",oci-artifact=true,push-by-digest=true,name-canonical=true,push=true\n' "$base_docker_image" | tee -a "${GITHUB_OUTPUT}"
+          
+          # Prepare the build matrix
+          defineBuild() { printf '{ "platform": "%s", "runner": "%s" }' "$1" "$2"; }
+          makeMatrix() { local IFS=','; printf 'build_matrix={ "include": [%s] }\n' "$*"; }
+          
+          runner_base='ubuntu-26.04'
+          amd64=$(defineBuild 'linux/amd64' "${runner_base}")
+          arm64=$(defineBuild 'linux/arm64' "${runner_base}-arm")
 
-      - name: Set up QEMU
-        if: ${{ inputs.build_arm64_image }}
-        uses: docker/setup-qemu-action@v4
-        with:
-          platforms: 'arm64'
+          if [[ '${{ inputs.build_arm64_image }}' = 'true' ]]; then
+            makeMatrix "$amd64" "$arm64" | tee -a "${GITHUB_OUTPUT}"
+          else
+            makeMatrix "$amd64" | tee -a "${GITHUB_OUTPUT}"
+          fi
 
+  build_and_push_images:
+    needs:
+      - set_variables
+    strategy:
+      matrix: ${{ fromJSON(needs.set_variables.outputs.build_matrix) }}
+    runs-on: ${{ matrix.runner }}
+    outputs:
+      digest_linux_amd64: ${{ steps.result.outputs.digest_linux_amd64 }}
+      digest_linux_arm64: ${{ steps.result.outputs.digest_linux_arm64 }}
+    steps:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
 
@@ -106,32 +129,74 @@ jobs:
       - name: Login to ACR via OIDC
         run: az acr login --name ${{ inputs.acr_name }}
 
-      - name: Checkout
-        # Checkout is needed when context is local "."
-        # Otherwise the repository code will not be fetched for the build
-        if: ${{ inputs.context == '.' }}
-        uses: actions/checkout@v7
-
-      - name: Download artifacts
-        if: ${{ inputs.artifact-id }}
-        uses: actions/download-artifact@v8
+      - name: Build
+        id: build
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
         with:
-          artifact-ids: ${{ inputs.artifact-id }}
-          path: ${{ inputs.artifact-path }}
-
-      - name: Build and push
-        uses: docker/build-push-action@v7
-        with:
-          tags: |
-            ${{ steps.variables.outputs.docker_image }}
-            ${{ github.ref_name == 'main' && steps.variables.outputs.docker_image_latest || '' }}
-          labels: |
-            git_sha=${{ github.sha }}
-          cache-from: type=registry,ref=${{ steps.variables.outputs.docker_image_cache }}
-          cache-to: ${{ github.ref_name == 'main' && format('type=registry,ref={0},mode=max', steps.variables.outputs.docker_image_cache) || '' }}
-          push: true
-          platforms: ${{ inputs.build_arm64_image && 'linux/amd64,linux/arm64' || 'linux/amd64' }}
-          context: ${{ inputs.context }}
           build-args: ${{ inputs.build_args }}
+          context: ${{ inputs.context }}
           file: ${{ inputs.file }}
+          labels: git_sha=${{ github.sha }}
+          outputs: ${{ needs.set_variables.outputs.build_outputs }}
+          platforms: ${{ matrix.platform }}
           target: ${{ inputs.target }}
+          cache-from: type=registry,ref=${{ needs.set_variables.outputs.docker_image_cache }}
+          cache-to: ${{ github.ref_name == 'main' && format('type=registry,ref={0},mode=max', needs.set_variables.outputs.docker_image_cache) || '' }}
+
+      - name: Result
+        id: result
+        shell: bash
+        run: |
+          platform=$(echo "${{ matrix.platform }}" | tr '/' '_')
+          echo "digest_${platform}=${{ steps.build.outputs.digest }}" | tee -a "${GITHUB_OUTPUT}"
+
+  push_manifest:
+    needs:
+      - set_variables
+      - build_and_push_images
+    runs-on: ubuntu-26.04
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Azure login
+        uses: azure/login@v3
+        with:
+          client-id: ${{ secrets.azure_client_id }}
+          tenant-id: ${{ secrets.azure_tenant_id }}
+          subscription-id: ${{ secrets.azure_subscription_id }}
+
+      - name: Login to ACR via OIDC
+        run: az acr login --name ${{ inputs.acr_name }}
+
+      - name: Push manifest
+        id: result
+        shell: bash
+        run: |
+          cmd=(docker buildx imagetools create)
+          
+          tags=(
+            "${{ needs.set_variables.outputs.docker_image }}"
+            "${{ github.ref_name == 'main' && needs.set_variables.outputs.docker_image_latest || '' }}"
+          )
+          echo "Tags: ${tags}"
+          
+          for tag in "${tags[@]}"; do
+            if [[ ! -z "$tag" ]]; then
+              cmd+=(--tag "$tag")
+            fi
+          done
+          
+          digests=(
+            "${{ needs.build_and_push_images.outputs.digest_linux_amd64 }}"
+            "${{ needs.build_and_push_images.outputs.digest_linux_arm64 }}"
+          )
+          echo "Digests: ${digests}"
+          
+          for digest in "${digests[@]}"; do
+            if [[ ! -z "$digest" ]]; then
+              cmd+=("$digest")
+            fi
+          done
+          
+          "${cmd[@]}"
