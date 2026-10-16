@@ -28,6 +28,8 @@ allow-dependencies-licenses:
   - pkg:pypi/pymssql
   # Actually Apache-2.0, but the scanner's license DB reports LicenseRef-bad-non-standard for it.
   - pkg:maven/org.codehaus.mojo/build-helper-maven-plugin
+  # LGPL-3.0 per its POM, but the scanner reports NOASSERTION for it.
+  - pkg:maven/org.geolatte/geolatte-geom
 
 # List of explicitly allowed licenses for EUPL 1.2 Inbound Compatibility
 # (Allows importing these libraries into a EUPL 1.2 project)
