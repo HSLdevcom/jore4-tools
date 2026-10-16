@@ -27,6 +27,6 @@ jobs:
           submodules: ${{ inputs.checkout_submodules }}
 
       - name: Validate config
-        uses: suzuki-shunsuke/github-action-renovate-config-validator@ee9f69e1f683ed0d08225086482b34fc9abe9300 # 2.1.0
+        uses: suzuki-shunsuke/github-action-renovate-config-validator@1e1604219a6b38ae9a10aff42a28a3656322c31a # v2.4.1
         with:
           config_file_path: ${{ inputs.config_file_path }}
