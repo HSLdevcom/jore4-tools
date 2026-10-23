@@ -5,10 +5,11 @@ vulnerability-check: true
 comment-summary-in-pr: always
 fail-on-scopes: runtime
 
-# Add packages here if they fail the check and are ONLY used in development or in CI etc.
-# DO NOT ADD PACKAGES THAT ARE PACKAGED WITH THE BUILD
-# OR IF THIS ACTION IS BROKEN AND IS REPORTING WRONG LICENSE FOR A PACKAGE!!!
-# OR IF SOME SPECIAL CASE IS NEEDED FOR SOME OTHER REASON.
+# Add packages here if
+# - they fail the check and are ONLY used in development or in CI etc.
+#   - DO NOT ADD PACKAGES THAT ARE PACKAGED WITH THE BUILD
+# - IF THIS ACTION IS BROKEN AND IS REPORTING WRONG LICENSE FOR A PACKAGE!!!
+# - IF SOME SPECIAL CASE IS NEEDED FOR SOME OTHER REASON.
 allow-dependencies-licenses:
   # Only used in CI
   - pkg:githubactions/trufflesecurity/trufflehog
@@ -30,6 +31,8 @@ allow-dependencies-licenses:
   - pkg:maven/org.codehaus.mojo/build-helper-maven-plugin
   # LGPL-3.0 per its POM, but the scanner reports NOASSERTION for it.
   - pkg:maven/org.geolatte/geolatte-geom
+  # EUPL-1.2 but LICENSE.md only in parent folder where dependency scan cannot find it.
+  - pkg:maven/org.entur.ror.helpers/oauth2
 
 # List of explicitly allowed licenses for EUPL 1.2 Inbound Compatibility
 # (Allows importing these libraries into a EUPL 1.2 project)
