@@ -12,6 +12,11 @@ on:
         type: string
         required: false
         default: "false"
+      checkout_path:
+        description: Relative path under $GITHUB_WORKSPACE to place the repository
+        type: string
+        required: false
+        default: ""
 
 permissions:
   contents: read
@@ -25,6 +30,7 @@ jobs:
         uses: actions/checkout@v7
         with:
           submodules: ${{ inputs.checkout_submodules }}
+          path: ${{ inputs.checkout_path }}
 
       - name: Validate config
         uses: suzuki-shunsuke/github-action-renovate-config-validator@ee9f69e1f683ed0d08225086482b34fc9abe9300 # 2.1.0
