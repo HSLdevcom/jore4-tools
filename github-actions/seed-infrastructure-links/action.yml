@@ -13,7 +13,7 @@ runs:
     - name: Fetch infrastructure link dump
       shell: bash
       run: |
-        curl https://stjore4dev001.blob.core.windows.net/jore4-ui/infraLinks_digiroad_r_2026-01_mml_2026-08-04.sql -o infraLinks.sql
+        curl https://stjore4dev001.blob.core.windows.net/jore4-ui/infraLinks_digiroad_r_2026-01_mml_2026-10-26.sql -o infraLinks.sql
 
 
     - name: Verify that testdb is up, running and migrated
