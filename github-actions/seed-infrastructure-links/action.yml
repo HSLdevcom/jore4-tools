@@ -5,7 +5,7 @@ inputs:
   db_connection_string:
     description: Database connection string
     required: false
-    default: "postgresql://dbadmin:adminpassword@localhost:5432/jore4e2e"
+    default: "postgresql://dbadmin:adminpassword@localhost:5432/jore4main"
 
 runs:
   using: "composite"
