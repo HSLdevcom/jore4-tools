@@ -112,4 +112,4 @@ jobs:
           fi
 
       - name: Seed infrastructure links
-        uses: ./github-actions/seed-infrastructure-links
+        uses: ./github-actions/seed-infrastructure-links@use-main-db
